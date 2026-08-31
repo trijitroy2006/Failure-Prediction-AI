@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 import database
 import market_analysis
 import secrets
@@ -22,7 +22,6 @@ def dashboard():
             session['project_id'] = project_id
         except Exception as e:
             print(f"Database error: {e}")
-            # Fallback if DB is not set up correctly by user
             session['fallback_project_data'] = project_data
             
         return redirect(url_for('dashboard'))
@@ -41,16 +40,43 @@ def dashboard():
     industry = "Technology"
     startup_name = ""
     target_market = ""
+    budget = 0
+    business_model = "SaaS"
 
     if project:
         industry = project.get('industry', 'Technology')
         startup_name = project.get('startup_name', '')
         target_market = project.get('target_market', '')
+        business_model = project.get('business_model', 'SaaS')
+        try:
+            budget = float(project.get('budget', 0))
+        except:
+            budget = 0
 
-    market_data = market_analysis.get_market_data(industry, target_market)
-    competitors = market_analysis.get_competitor_data(startup_name, industry)
+    market_data = market_analysis.get_market_data(industry, target_market, budget)
+    competitors = market_analysis.get_competitor_data(startup_name, industry, business_model)
     
     return render_template('dashboard.html', market_data=market_data, competitors=competitors, project=project)
+
+@app.route('/api/analyze', methods=['POST'])
+def api_analyze():
+    data = request.json
+    industry = data.get('industry', 'Technology')
+    startup_name = data.get('startup_name', '')
+    target_market = data.get('target_market', '')
+    business_model = data.get('business_model', 'SaaS')
+    try:
+        budget = float(data.get('budget', 0))
+    except:
+        budget = 0
+        
+    market_data = market_analysis.get_market_data(industry, target_market, budget)
+    competitors = market_analysis.get_competitor_data(startup_name, industry, business_model)
+    
+    return jsonify({
+        "market_data": market_data,
+        "competitors": competitors
+    })
 
 @app.route('/placeholder')
 def placeholder():
