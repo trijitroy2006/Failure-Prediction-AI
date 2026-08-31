@@ -4,36 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Failure Prediction AI</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <div class="app-container">
-        <header class="app-header">
+    
+    <!-- Top Navigation -->
+    <nav class="navbar">
+        <div class="brand">
+            <span class="brand-icon">✦</span>
+            Failure Prediction AI
+        </div>
+        <div class="nav-links">
+            <a href="{{ url_for('dashboard') }}">Intelligence Dashboard</a>
+            <a href="{{ url_for('placeholder') }}" class="active">Risk Scoring</a>
+            <a href="{{ url_for('placeholder') }}">Strategic Reasoning</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header class="page-header" style="margin-top: 4rem;">
             <h1>Module In Development</h1>
-            <p class="subtitle">This feature will be available in upcoming milestones.</p>
+            <p>This feature will be available in upcoming milestones.</p>
         </header>
 
-        <div class="main-window">
-            <div class="window-controls">
-                <span class="dot dot-red"></span>
-                <span class="dot dot-yellow"></span>
-                <span class="dot dot-green"></span>
-            </div>
-            
-            <nav class="tabs">
-                <a href="{{ url_for('dashboard') }}" class="tab">Project Input</a>
-                <a href="{{ url_for('placeholder') }}" class="tab active">Risk Assessment</a>
-                <a href="{{ url_for('placeholder') }}" class="tab">Recommendations</a>
-                <a href="{{ url_for('dashboard') }}" class="tab">Dashboard</a>
-            </nav>
-
-            <div class="content-grid" style="display: flex; justify-content: center; align-items: center; min-height: 400px;">
-                <div style="text-align: center; color: var(--text-secondary);">
-                    <h2 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--text-primary);">Coming Soon</h2>
-                    <p>We are actively working on this module.</p>
-                </div>
-            </div>
+        <div class="empty-state">
+            <svg width="48" height="48" fill="none" stroke="var(--text-secondary)" stroke-width="1.5" viewBox="0 0 24 24" style="margin: 0 auto;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <h3>Coming Soon</h3>
+            <p>We are actively working on this module.</p>
         </div>
     </div>
 </body>
