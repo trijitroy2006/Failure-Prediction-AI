@@ -1,10 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const form = document.querySelector('.analysis-form');
+    const form = document.querySelector('.submission-form');
     if (!form) return;
 
     // Elements to update
     const updateMetrics = (data) => {
-        // We assume we have the metric-card elements in DOM, if they exist
         const metricValues = document.querySelectorAll('.metric-value');
         if (metricValues.length === 3 && data.market_data) {
             metricValues[0].textContent = data.market_data.TAM.value;
@@ -12,22 +11,41 @@ document.addEventListener('DOMContentLoaded', () => {
             metricValues[2].textContent = data.market_data.SOM.value;
         }
 
-        // Competitor Table
-        const tbody = document.querySelector('tbody');
-        if (tbody && data.competitors) {
-            tbody.innerHTML = '';
+        // Competitor List
+        const compList = document.querySelector('.competitor-list');
+        if (compList && data.competitors) {
+            compList.innerHTML = '';
             data.competitors.forEach(comp => {
-                const badgeClass = comp.type === 'DIRECT' ? 'badge-direct' : 'badge-indirect';
-                const row = `
-                    <tr>
-                        <td style="font-weight: 600; color: #fff;">${comp.name}</td>
-                        <td><span class="badge ${badgeClass}">${comp.type}</span></td>
-                        <td>${comp.market_share}</td>
-                        <td>${comp.revenue}</td>
-                        <td class="text-success">${comp.growth}</td>
-                    </tr>
+                const compTypeClass = comp.type.toLowerCase();
+                const card = `
+                    <div class="competitor-card">
+                        <div class="comp-header">
+                            <h3>${comp.name}</h3>
+                            <span class="tag ${compTypeClass}">${comp.type}</span>
+                        </div>
+                        <div class="comp-metrics">
+                            <div class="c-metric">
+                                <span class="c-label">Market Share</span>
+                                <span class="c-val">${comp.market_share}</span>
+                            </div>
+                            <div class="c-metric">
+                                <span class="c-label">Revenue</span>
+                                <span class="c-val">${comp.revenue}</span>
+                            </div>
+                            <div class="c-metric">
+                                <span class="c-label">Growth</span>
+                                <span class="c-val positive">${comp.growth}</span>
+                            </div>
+                        </div>
+                        <div class="comp-progress">
+                            <span class="c-label">Market Position</span>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${comp.position}%"></div>
+                            </div>
+                        </div>
+                    </div>
                 `;
-                tbody.insertAdjacentHTML('beforeend', row);
+                compList.insertAdjacentHTML('beforeend', card);
             });
         }
     };
@@ -58,9 +76,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputs = form.querySelectorAll('input, select');
     inputs.forEach(input => {
         input.addEventListener('input', () => {
-            // Only update if we already have the results grid showing
-            const resultsGrid = document.querySelector('.results-grid');
-            if (resultsGrid) {
+            // Only update if we already have the competitor-list showing
+            const compList = document.querySelector('.competitor-list');
+            if (compList) {
                 fetchAnalytics();
             }
         });
