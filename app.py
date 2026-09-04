@@ -58,6 +58,25 @@ def dashboard():
     
     return render_template('dashboard.html', market_data=market_data, competitors=competitors, project=project)
 
+@app.route('/risk_assessment')
+def risk_assessment():
+    project_id = session.get('project_id')
+    project = session.get('fallback_project_data')
+    
+    if project_id:
+        try:
+            db_project = database.get_project(project_id)
+            if db_project:
+                project = db_project
+        except Exception as e:
+            print(f"Database error fetching project: {e}")
+
+    import risk_analysis
+    scores = risk_analysis.calculate_risk_scores(project)
+    swot = risk_analysis.generate_swot(project)
+
+    return render_template('risk_assessment.html', project=project, scores=scores, swot=swot)
+
 @app.route('/api/analyze', methods=['POST'])
 def api_analyze():
     data = request.json
