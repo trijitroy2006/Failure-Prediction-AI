@@ -5,17 +5,89 @@ import risk_analysis
 
 st.set_page_config(page_title="Failure Prediction AI", layout="wide", initial_sidebar_state="collapsed")
 
+# Custom CSS to mimic the Mac-style window from the PDF
+st.markdown("""
+<style>
+    /* Background color of the entire app */
+    .stApp {
+        background-color: #f3f4f6;
+    }
+    
+    /* Main container styling to look like a window */
+    .main .block-container {
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        padding: 2rem !important;
+        margin-top: 3rem;
+        margin-bottom: 3rem;
+        border: 1px solid #e5e7eb;
+    }
+
+    /* Mac window controls (Red, Yellow, Green dots) */
+    .mac-controls {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 20px;
+        margin-top: -10px;
+    }
+    .mac-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+    }
+    .mac-red { background-color: #ff5f56; }
+    .mac-yellow { background-color: #ffbd2e; }
+    .mac-green { background-color: #27c93f; }
+
+    /* Customizing the tabs to look more like the PDF */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 24px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+    .stTabs [data-baseweb="tab"] {
+        height: 50px;
+        white-space: pre-wrap;
+        background-color: transparent;
+        border-radius: 4px 4px 0 0;
+        gap: 1px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        font-weight: 600;
+        color: #6b7280;
+    }
+    .stTabs [aria-selected="true"] {
+        color: #111827;
+        border-bottom: 2px solid #3b82f6;
+    }
+    
+    /* Adjusting headers */
+    h1 {
+        font-size: 2.2rem !important;
+        padding-bottom: 0 !important;
+    }
+    
+</style>
+""", unsafe_allow_html=True)
+
+# Injecting the Mac dots at the top of the container
+st.markdown("""
+<div class="mac-controls">
+    <div class="mac-dot mac-red"></div>
+    <div class="mac-dot mac-yellow"></div>
+    <div class="mac-dot mac-green"></div>
+</div>
+""", unsafe_allow_html=True)
+
 st.title("Failure Prediction AI")
 st.write("Intelligent decision-support platform to predict failure risks and recommend mitigations.")
 
-# We will use two main tabs to separate Milestone 1 and Milestone 2, preserving the exact frontend layout
 tab_m1, tab_m2 = st.tabs(["Milestone 1: Market Intelligence", "Milestone 2: Risk Assessment"])
 
 with tab_m1:
     st.markdown("### ▲ MILESTONE 1 • WEEKS 1-2")
     st.markdown("#### Data Collection & Market Intelligence")
     
-    # EXACT same 3-column layout as requested
     col1, col2, col3 = st.columns(3)
 
     with col1:
@@ -94,7 +166,6 @@ with tab_m2:
         scores = risk_analysis.calculate_risk_scores(data)
         swot = risk_analysis.generate_swot(data)
         
-        # EXACT Milestone 2 layout from the PDF
         r_col1, r_col2, r_col3 = st.columns(3)
         
         with r_col1:
@@ -122,7 +193,6 @@ with tab_m2:
             
             st.write("---")
             st.write("**Assessment Metrics**")
-            # Using disabled sliders to represent AI-determined feasibility metrics visually
             market_opp = 80 if data['industry'] == 'Technology' else 65
             team_cap = 70 if data['budget'] > 50000 else 40
             comp_adv = 60
