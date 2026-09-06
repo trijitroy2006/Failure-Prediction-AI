@@ -8,14 +8,8 @@ st.set_page_config(page_title="Failure Prediction AI", layout="wide", initial_si
 # Custom CSS to mimic the Mac-style window from the PDF
 st.markdown("""
 <style>
-    /* Background color of the entire app */
-    .stApp {
-        background-color: #f3f4f6;
-    }
-    
     /* Main container styling to look like a window */
     .main .block-container {
-        background-color: #ffffff;
         border-radius: 12px;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
         padding: 2rem !important;
