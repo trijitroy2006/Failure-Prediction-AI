@@ -192,10 +192,10 @@ with tab_m2:
             comp_adv = 60
             res_avail = 90 if data['budget'] > 200000 else 50
             
-            st.slider("Market Opportunity", 0, 100, market_opp, disabled=True)
-            st.slider("Team Capability", 0, 100, team_cap, disabled=True)
-            st.slider("Competitive Advantage", 0, 100, comp_adv, disabled=True)
-            st.slider("Resource Availability", 0, 100, res_avail, disabled=True)
+            st.progress(market_opp / 100, text=f"Market Opportunity: {market_opp}%")
+            st.progress(team_cap / 100, text=f"Team Capability: {team_cap}%")
+            st.progress(comp_adv / 100, text=f"Competitive Advantage: {comp_adv}%")
+            st.progress(res_avail / 100, text=f"Resource Availability: {res_avail}%")
             
     else:
         st.info("Please submit a project in the 'Milestone 1' tab first.")
