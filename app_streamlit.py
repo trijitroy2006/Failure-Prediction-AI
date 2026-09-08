@@ -155,47 +155,98 @@ with tab_m2:
     st.markdown("### ▲ MILESTONE 2 • WEEKS 3-4")
     st.markdown("#### Risk Assessment & SWOT Analysis")
     
-    if 'project_data' in st.session_state:
-        data = st.session_state['project_data']
-        scores = risk_analysis.calculate_risk_scores(data)
-        swot = risk_analysis.generate_swot(data)
-        
-        r_col1, r_col2, r_col3 = st.columns(3)
-        
-        with r_col1:
-            st.subheader("RISK SCORE")
-            st.metric("Success Probability", f"{scores['overall_success_probability']}%")
-            st.write(f"**{scores['risk_level'].upper()} RISK**")
-            
-            st.write("---")
-            st.write("**Key Risks**")
-            st.progress(scores['financial_risk'] / 100, text="Financial Risk")
-            st.progress(scores['market_risk'] / 100, text="Market Risk")
-            st.progress(scores['technical_risk'] / 100, text="Technical Risk")
-            st.progress(scores['operational_risk'] / 100, text="Operational Risk")
+    # STEP 21 — Add Assessment Inputs
+    col_in1, col_in2 = st.columns(2)
+    with col_in1:
+        market_competition = st.selectbox("Market Competition", ["Low", "Medium", "High"])
+        team_expertise = st.selectbox("Team Expertise", ["Low", "Medium", "High"])
+        resource_availability = st.selectbox("Resource Availability", ["Limited", "Moderate", "Good"])
+    with col_in2:
+        innovation_level = st.selectbox("Innovation Level", ["Low", "Medium", "High"])
+        market_research = st.selectbox("Market Research", ["Limited", "Moderate", "Strong"])
 
-        with r_col2:
-            st.subheader("SWOT ANALYSIS")
-            st.success("**Strengths**\n" + "\n".join([f"- {s}" for s in swot['Strengths']]))
-            st.error("**Weaknesses**\n" + "\n".join([f"- {w}" for w in swot['Weaknesses']]))
-            st.info("**Opportunities**\n" + "\n".join([f"- {o}" for o in swot['Opportunities']]))
-            st.warning("**Threats**\n" + "\n".join([f"- {t}" for t in swot['Threats']]))
+    # STEP 22 — Calculate Risk
+    from risk_engine import calculate_risk, get_risk_status, calculate_success_probability
+    risk_score = calculate_risk(
+        market_competition,
+        team_expertise,
+        resource_availability,
+        innovation_level,
+        market_research
+    )
+    risk_status = get_risk_status(risk_score)
+    success_probability = calculate_success_probability(risk_score)
 
-        with r_col3:
-            st.subheader("FEASIBILITY")
-            st.metric("Feasibility Score", f"{scores['overall_success_probability'] + 7}%")
+    # STEP 25 — Generate SWOT Automatically
+    from swot_analysis import generate_swot
+    swot = generate_swot(
+        team_expertise,
+        innovation_level,
+        market_competition,
+        resource_availability,
+        market_research
+    )
+
+    st.markdown("---")
+    
+    # FINAL DASHBOARD LAYOUT (3 columns)
+    r_col1, r_col2, r_col3 = st.columns(3)
+    
+    with r_col1:
+        st.subheader("RISK SCORE")
+        st.metric("Risk Score", risk_score)
+        
+        if risk_status == "HIGH RISK":
+            st.error(risk_status)
+        elif risk_status == "MEDIUM RISK":
+            st.warning(risk_status)
+        else:
+            st.success(risk_status)
             
-            st.write("---")
-            st.write("**Assessment Metrics**")
-            market_opp = 80 if data['industry'] == 'Technology' else 65
-            team_cap = 70 if data['budget'] > 50000 else 40
-            comp_adv = 60
-            res_avail = 90 if data['budget'] > 200000 else 50
+        st.write("**Success Probability**")
+        st.progress(success_probability / 100)
+        st.write(f"{success_probability}%")
+        
+        st.write("**Key Risks**")
+        st.write("Calculated from inputs.")
+
+    with r_col2:
+        st.subheader("SWOT ANALYSIS")
+        
+        st.success("### Strengths")
+        for item in swot["Strengths"]:
+            st.write("•", item)
             
-            st.progress(market_opp / 100, text=f"Market Opportunity: {market_opp}%")
-            st.progress(team_cap / 100, text=f"Team Capability: {team_cap}%")
-            st.progress(comp_adv / 100, text=f"Competitive Advantage: {comp_adv}%")
-            st.progress(res_avail / 100, text=f"Resource Availability: {res_avail}%")
+        st.error("### Weaknesses")
+        for item in swot["Weaknesses"]:
+            st.write("•", item)
             
-    else:
-        st.info("Please submit a project in the 'Milestone 1' tab first.")
+        st.info("### Opportunities")
+        for item in swot["Opportunities"]:
+            st.write("•", item)
+            
+        st.warning("### Threats")
+        for item in swot["Threats"]:
+            st.write("•", item)
+
+    with r_col3:
+        st.subheader("FEASIBILITY")
+        st.write("**Project Feasibility**")
+        
+        # STEP 27 - Feasibility Assessment sliders
+        market_opportunity = st.slider("Market Opportunity", 0, 100, 50)
+        team_capability = st.slider("Team Capability", 0, 100, 50)
+        competitive_advantage = st.slider("Competitive Advantage", 0, 100, 50)
+        resource_score = st.slider("Resource Score", 0, 100, 50)
+        
+        from feasibility import calculate_feasibility
+        feasibility_score = calculate_feasibility(
+            market_opportunity,
+            team_capability,
+            competitive_advantage,
+            resource_score
+        )
+        
+        st.metric("Feasibility Score", f"{feasibility_score}%")
+
+
