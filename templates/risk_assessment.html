@@ -184,6 +184,50 @@
                         </select>
                     </div>
 
+                    <div class="form-group">
+                        <label>Market Opportunity</label>
+                        <input type="range"
+                            name="market_opportunity"
+                            min="0"
+                            max="100"
+                            value="50"
+                            oninput="this.nextElementSibling.value = this.value">
+                        <output>50</output>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Team Capability</label>
+                        <input type="range"
+                                name="team_capability"
+                                min="0"
+                                max="100"
+                                value="50"
+                                oninput="this.nextElementSibling.value = this.value">
+                        <output>50</output>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Competitive Advantage</label>
+                        <input type="range"
+                                name="competitive_advantage"
+                                min="0"
+                                max="100"
+                                value="50"
+                                oninput="this.nextElementSibling.value = this.value">
+                        <output>50</output>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Resource Availability Score</label>
+                        <input type="range"
+                                name="resource_availability_score"
+                                min="0"
+                                max="100"
+                                value="50"
+                                oninput="this.nextElementSibling.value = this.value">
+                        <output>50</output>
+                    </div>                    
+
                     <button type="submit" class="submit-btn">
                         Calculate Risk
                     </button>

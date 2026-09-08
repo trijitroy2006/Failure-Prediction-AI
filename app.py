@@ -86,6 +86,12 @@ def risk_assessment():
         resource_availability = request.form.get('resource_availability')
         innovation_level = request.form.get('innovation_level')
         market_research = request.form.get('market_research')
+        market_opportunity = int(request.form.get('market_opportunity', 50))
+        team_capability = int(request.form.get('team_capability', 50))
+        competitive_advantage = int(request.form.get('competitive_advantage', 50))
+        resource_availability_score = int(
+            request.form.get('resource_availability_score', 50)
+        )
 
         # Risk score
         risk_score = calculate_risk(
@@ -111,13 +117,22 @@ def risk_assessment():
             market_research
         )
 
+        # feasibility analysis
+        feasibility_score = feasibility.calculate_feasibility(
+        market_opportunity,
+        team_capability,
+        competitive_advantage,
+        resource_availability_score
+        )
+
         return render_template(
             'risk_assessment.html',
             project=project,
             risk_score=risk_score,
             risk_status=risk_status,
             success_probability=success_probability,
-            swot=swot
+            swot=swot,
+            feasibility_score=feasibility_score
         )
 
     # Normal GET request
