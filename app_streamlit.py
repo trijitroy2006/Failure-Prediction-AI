@@ -11,11 +11,11 @@ st.markdown("""
     /* Main container styling to look like a window */
     .main .block-container {
         border-radius: 12px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        box-shadow: 0 10px 25px rgba(37, 99, 235, 0.1);
         padding: 2rem !important;
         margin-top: 3rem;
         margin-bottom: 3rem;
-        border: 1px solid #e5e7eb;
+        border: 1px solid #BFDBFE;
     }
 
     /* Mac window controls (Red, Yellow, Green dots) */
