@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import market_analysis
-import risk_analysis
+
 
 st.set_page_config(page_title="Failure Prediction AI", layout="wide", initial_sidebar_state="collapsed")
 
