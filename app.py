@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, j
 import database
 import market_analysis
 import secrets
+import feasibility
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)
@@ -75,7 +76,14 @@ def risk_assessment():
     scores = risk_analysis.calculate_risk_scores(project)
     swot = risk_analysis.generate_swot(project)
 
-    return render_template('risk_assessment.html', project=project, scores=scores, swot=swot)
+    feasibility_score = feasibility.calculate_feasibility(
+    100 - scores["market_risk"],
+    100 - scores["technical_risk"],
+    100 - scores["market_risk"],
+    100 - scores["financial_risk"]
+)
+
+    return render_template('risk_assessment.html', project=project, scores=scores, swot=swot, feasibility_score= feasibility_score)
 
 @app.route('/api/analyze', methods=['POST'])
 def api_analyze():
