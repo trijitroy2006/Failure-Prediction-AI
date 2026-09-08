@@ -3,6 +3,12 @@ import database
 import market_analysis
 import secrets
 import feasibility
+from risk_engine import (
+    calculate_risk,
+    get_risk_status,
+    calculate_success_probability
+)
+from swot_analysis import generate_swot
 
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)
@@ -59,7 +65,7 @@ def dashboard():
     
     return render_template('dashboard.html', market_data=market_data, competitors=competitors, project=project)
 
-@app.route('/risk_assessment')
+@app.route('/risk_assessment', methods=['GET', 'POST']) #added "methods=['GET', 'POST']" this here
 def risk_assessment():
     project_id = session.get('project_id')
     project = session.get('fallback_project_data')
@@ -72,16 +78,7 @@ def risk_assessment():
         except Exception as e:
             print(f"Database error fetching project: {e}")
 
-    import risk_analysis
-    scores = risk_analysis.calculate_risk_scores(project)
-    swot = risk_analysis.generate_swot(project)
-
-    feasibility_score = feasibility.calculate_feasibility(
-    100 - scores["market_risk"],
-    100 - scores["technical_risk"],
-    100 - scores["market_risk"],
-    100 - scores["financial_risk"]
-)
+    #removed import risk_analysis, its score, swot and old feasibility calc which was based on risk_analysis
 
     return render_template('risk_assessment.html', project=project, scores=scores, swot=swot, feasibility_score= feasibility_score)
 
