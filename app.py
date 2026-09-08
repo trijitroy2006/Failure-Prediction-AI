@@ -65,11 +65,11 @@ def dashboard():
     
     return render_template('dashboard.html', market_data=market_data, competitors=competitors, project=project)
 
-@app.route('/risk_assessment', methods=['GET', 'POST']) #added "methods=['GET', 'POST']" this here
+@app.route('/risk_assessment', methods=['GET', 'POST'])
 def risk_assessment():
     project_id = session.get('project_id')
     project = session.get('fallback_project_data')
-    
+
     if project_id:
         try:
             db_project = database.get_project(project_id)
@@ -78,9 +78,53 @@ def risk_assessment():
         except Exception as e:
             print(f"Database error fetching project: {e}")
 
-    #removed import risk_analysis, its score, swot and old feasibility calc which was based on risk_analysis
+    # Calculate risk when the form is submitted
+    if request.method == 'POST':
 
-    return render_template('risk_assessment.html', project=project, scores=scores, swot=swot, feasibility_score= feasibility_score)
+        market_competition = request.form.get('market_competition')
+        team_expertise = request.form.get('team_expertise')
+        resource_availability = request.form.get('resource_availability')
+        innovation_level = request.form.get('innovation_level')
+        market_research = request.form.get('market_research')
+
+        # Risk score
+        risk_score = calculate_risk(
+            market_competition,
+            team_expertise,
+            resource_availability,
+            innovation_level,
+            market_research
+        )
+
+        # Risk status
+        risk_status = get_risk_status(risk_score)
+
+        # Success probability
+        success_probability = calculate_success_probability(risk_score)
+
+        # SWOT analysis
+        swot = generate_swot(
+            team_expertise,
+            innovation_level,
+            market_competition,
+            resource_availability,
+            market_research
+        )
+
+        return render_template(
+            'risk_assessment.html',
+            project=project,
+            risk_score=risk_score,
+            risk_status=risk_status,
+            success_probability=success_probability,
+            swot=swot
+        )
+
+    # Normal GET request
+    return render_template(
+        'risk_assessment.html',
+        project=project
+    )
 
 @app.route('/api/analyze', methods=['POST'])
 def api_analyze():
