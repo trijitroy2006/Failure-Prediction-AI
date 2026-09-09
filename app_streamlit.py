@@ -162,99 +162,88 @@ with tab2:
     <p style="margin: 4px 0 24px 0; color: #6B7280; font-size: 15px; font-family: sans-serif;">AI-powered risk scoring and strategic evaluation</p>
     """, unsafe_allow_html=True)
     
-    # STEP 21 — Add Assessment Inputs
-    col_in1, col_in2 = st.columns(2)
-    with col_in1:
-        market_competition = st.selectbox("Market Competition", ["Low", "Medium", "High"])
-        team_expertise = st.selectbox("Team Expertise", ["Low", "Medium", "High"])
-        resource_availability = st.selectbox("Resource Availability", ["Limited", "Moderate", "Good"])
-    with col_in2:
-        innovation_level = st.selectbox("Innovation Level", ["Low", "Medium", "High"])
-        market_research = st.selectbox("Market Research", ["Limited", "Moderate", "Strong"])
+    with st.expander("⚙️ Configure Assessment Inputs (Click to expand)", expanded=False):
+        col_in1, col_in2, col_in3 = st.columns(3)
+        with col_in1:
+            market_competition = st.selectbox("Market Competition", ["Low", "Medium", "High"], index=2)
+            team_expertise = st.selectbox("Team Expertise", ["Low", "Medium", "High"], index=0)
+        with col_in2:
+            resource_availability = st.selectbox("Resource Availability", ["Limited", "Moderate", "Good"], index=0)
+            innovation_level = st.selectbox("Innovation Level", ["Low", "Medium", "High"], index=1)
+        with col_in3:
+            market_research = st.selectbox("Market Research", ["Limited", "Moderate", "Strong"], index=0)
+            
+        st.markdown("##### Feasibility Inputs")
+        f_col1, f_col2, f_col3, f_col4 = st.columns(4)
+        with f_col1: market_opportunity = st.slider("Market Opp", 0, 100, 45)
+        with f_col2: team_capability = st.slider("Team Cap", 0, 100, 50)
+        with f_col3: competitive_advantage = st.slider("Comp Adv", 0, 100, 35)
+        with f_col4: resource_score = st.slider("Resources", 0, 100, 65)
 
-    # STEP 22 â€” Calculate Risk
     from risk_engine import calculate_risk, get_risk_status, calculate_success_probability
-    risk_score = calculate_risk(
-        market_competition,
-        team_expertise,
-        resource_availability,
-        innovation_level,
-        market_research
-    )
+    risk_score = calculate_risk(market_competition, team_expertise, resource_availability, innovation_level, market_research)
     risk_status = get_risk_status(risk_score)
     success_probability = calculate_success_probability(risk_score)
 
-    # STEP 25 â€” Generate SWOT Automatically
     from swot_analysis import generate_swot
-    swot = generate_swot(
-        team_expertise,
-        innovation_level,
-        market_competition,
-        resource_availability,
-        market_research
-    )
+    swot = generate_swot(team_expertise, innovation_level, market_competition, resource_availability, market_research)
 
-    st.markdown("---")
+    from feasibility import calculate_feasibility
+    feasibility_score = calculate_feasibility(market_opportunity, team_capability, competitive_advantage, resource_score)
+
+    st.markdown("<br>", unsafe_allow_html=True)
     
-    # FINAL DASHBOARD LAYOUT (3 columns)
-    r_col1, r_col2, r_col3 = st.columns(3)
+    # FINAL DASHBOARD LAYOUT (3 columns) matching PDF mockup perfectly
+    r_col1, r_col2, r_col3 = st.columns([1, 1.5, 1])
     
     with r_col1:
-        st.subheader("RISK SCORE")
-        st.metric("Risk Score", risk_score)
-        
-        if risk_status == "HIGH RISK":
-            st.error(risk_status)
-        elif risk_status == "MEDIUM RISK":
-            st.warning(risk_status)
-        else:
-            st.success(risk_status)
+        st.markdown("#### Risk Score")
+        st.markdown(f"""
+        <div style="text-align: center; padding: 20px; border: 1px solid #FCA5A5; border-radius: 8px; background-color: #FEF2F2; margin-bottom: 20px;">
+            <div style="color: #6B7280; font-size: 12px; font-weight: 600; margin-bottom: 8px;">Overall Risk Score</div>
+            <div style="color: #DC2626; font-size: 48px; font-weight: 800; line-height: 1;">{risk_score}</div>
+            <div style="color: #DC2626; font-size: 12px; font-weight: 700; margin-top: 8px;">{risk_status}</div>
+        </div>
+        """, unsafe_allow_html=True)
             
-        st.write("**Success Probability**")
-        st.progress(success_probability / 100)
-        st.write(f"{success_probability}%")
+        st.markdown("**Success Probability**")
+        st.progress(success_probability / 100, text=f"{success_probability}%")
         
-        st.write("**Key Risks**")
-        st.write("Calculated from inputs.")
+        st.markdown("<br>**Key Risk Factors**", unsafe_allow_html=True)
+        st.error(f"**Team Expertise**\n\n{team_expertise} technical experience")
+        if market_competition == "High":
+            st.warning("**High Competition**\n\nStrong market rivals")
 
     with r_col2:
-        st.subheader("SWOT ANALYSIS")
-        
-        st.success("### Strengths")
-        for item in swot["Strengths"]:
-            st.write("â€¢", item)
-            
-        st.error("### Weaknesses")
-        for item in swot["Weaknesses"]:
-            st.write("â€¢", item)
-            
-        st.info("### Opportunities")
-        for item in swot["Opportunities"]:
-            st.write("â€¢", item)
-            
-        st.warning("### Threats")
-        for item in swot["Threats"]:
-            st.write("â€¢", item)
+        st.markdown("#### SWOT Analysis")
+        # 2x2 Grid exactly like the mockup
+        swot_c1, swot_c2 = st.columns(2)
+        with swot_c1:
+            st.success("**Strengths**\n" + "\n".join([f"- {s}" for s in swot["Strengths"]]))
+            st.info("**Opportunities**\n" + "\n".join([f"- {o}" for o in swot["Opportunities"]]))
+        with swot_c2:
+            st.error("**Weaknesses**\n" + "\n".join([f"- {w}" for w in swot["Weaknesses"]]))
+            st.warning("**Threats**\n" + "\n".join([f"- {t}" for t in swot["Threats"]]))
 
     with r_col3:
-        st.subheader("FEASIBILITY")
-        st.write("**Project Feasibility**")
+        st.markdown("#### Project Feasibility")
         
-        # STEP 27 - Feasibility Assessment sliders
-        market_opportunity = st.slider("Market Opportunity", 0, 100, 50)
-        team_capability = st.slider("Team Capability", 0, 100, 50)
-        competitive_advantage = st.slider("Competitive Advantage", 0, 100, 50)
-        resource_score = st.slider("Resource Score", 0, 100, 50)
+        feas_color = "#059669" if feasibility_score >= 50 else "#DC2626"
+        feas_bg = "#ECFDF5" if feasibility_score >= 50 else "#FEF2F2"
+        feas_border = "#6EE7B7" if feasibility_score >= 50 else "#FCA5A5"
         
-        from feasibility import calculate_feasibility
-        feasibility_score = calculate_feasibility(
-            market_opportunity,
-            team_capability,
-            competitive_advantage,
-            resource_score
-        )
+        st.markdown(f"""
+        <div style="text-align: center; padding: 20px; border: 1px solid {feas_border}; border-radius: 8px; background-color: {feas_bg}; margin-bottom: 20px;">
+            <div style="color: #6B7280; font-size: 12px; font-weight: 600; margin-bottom: 8px;">Feasibility Score</div>
+            <div style="color: {feas_color}; font-size: 48px; font-weight: 800; line-height: 1;">{feasibility_score}%</div>
+            <div style="color: {feas_color}; font-size: 11px; font-weight: 600; margin-top: 8px;">Moderate Feasibility with Improvements Needed</div>
+        </div>
+        """, unsafe_allow_html=True)
         
-        st.metric("Feasibility Score", f"{feasibility_score}%")
+        st.markdown("**Assessment Metrics**")
+        st.progress(team_capability / 100, text=f"Team Capability ({team_capability}%)")
+        st.progress(competitive_advantage / 100, text=f"Competitive Advantage ({competitive_advantage}%)")
+        st.progress(resource_score / 100, text=f"Resource Availability ({resource_score}%)")
 
 
 with tab3:
