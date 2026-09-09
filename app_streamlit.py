@@ -73,14 +73,16 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-st.title("Failure Prediction AI")
-st.write("Intelligent decision-support platform to predict failure risks and recommend mitigations.")
+tab1, tab2, tab3, tab4 = st.tabs(["Project Input", "Risk Assessment", "Recommendations", "Dash"])
 
-tab_m1, tab_m2 = st.tabs(["Milestone 1: Market Intelligence", "Milestone 2: Risk Assessment"])
-
-with tab_m1:
-    st.markdown("### ▲ MILESTONE 1 • WEEKS 1-2")
-    st.markdown("#### Data Collection & Market Intelligence")
+with tab1:
+    st.markdown("""
+    <div style="background-color: #FEE2E2; color: #DC2626; padding: 4px 12px; border-radius: 16px; display: inline-block; font-size: 0.75rem; font-weight: 700; margin-bottom: 8px; font-family: sans-serif;">
+        ▲ MILESTONE 1 • WEEKS 1-2
+    </div>
+    <h1 style="margin: 0; padding: 0; font-size: 28px; color: #111827; font-weight: 700; font-family: sans-serif;">Data Collection & Market Intelligence</h1>
+    <p style="margin: 4px 0 24px 0; color: #6B7280; font-size: 15px; font-family: sans-serif;">Gather project data and analyze market landscape</p>
+    """, unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns(3)
 
@@ -151,9 +153,14 @@ with tab_m1:
         else:
             st.info("Submit a project idea to generate competitor insights.")
 
-with tab_m2:
-    st.markdown("### ▲ MILESTONE 2 • WEEKS 3-4")
-    st.markdown("#### Risk Assessment & SWOT Analysis")
+with tab2:
+    st.markdown("""
+    <div style="background-color: #FEE2E2; color: #DC2626; padding: 4px 12px; border-radius: 16px; display: inline-block; font-size: 0.75rem; font-weight: 700; margin-bottom: 8px; font-family: sans-serif;">
+        📋 MILESTONE 2 • WEEKS 3-4
+    </div>
+    <h1 style="margin: 0; padding: 0; font-size: 28px; color: #111827; font-weight: 700; font-family: sans-serif;">Risk Assessment & SWOT Analysis</h1>
+    <p style="margin: 4px 0 24px 0; color: #6B7280; font-size: 15px; font-family: sans-serif;">AI-powered risk scoring and strategic evaluation</p>
+    """, unsafe_allow_html=True)
     
     # STEP 21 — Add Assessment Inputs
     col_in1, col_in2 = st.columns(2)
@@ -165,7 +172,7 @@ with tab_m2:
         innovation_level = st.selectbox("Innovation Level", ["Low", "Medium", "High"])
         market_research = st.selectbox("Market Research", ["Limited", "Moderate", "Strong"])
 
-    # STEP 22 — Calculate Risk
+    # STEP 22 â€” Calculate Risk
     from risk_engine import calculate_risk, get_risk_status, calculate_success_probability
     risk_score = calculate_risk(
         market_competition,
@@ -177,7 +184,7 @@ with tab_m2:
     risk_status = get_risk_status(risk_score)
     success_probability = calculate_success_probability(risk_score)
 
-    # STEP 25 — Generate SWOT Automatically
+    # STEP 25 â€” Generate SWOT Automatically
     from swot_analysis import generate_swot
     swot = generate_swot(
         team_expertise,
@@ -215,19 +222,19 @@ with tab_m2:
         
         st.success("### Strengths")
         for item in swot["Strengths"]:
-            st.write("•", item)
+            st.write("â€¢", item)
             
         st.error("### Weaknesses")
         for item in swot["Weaknesses"]:
-            st.write("•", item)
+            st.write("â€¢", item)
             
         st.info("### Opportunities")
         for item in swot["Opportunities"]:
-            st.write("•", item)
+            st.write("â€¢", item)
             
         st.warning("### Threats")
         for item in swot["Threats"]:
-            st.write("•", item)
+            st.write("â€¢", item)
 
     with r_col3:
         st.subheader("FEASIBILITY")
@@ -248,5 +255,11 @@ with tab_m2:
         )
         
         st.metric("Feasibility Score", f"{feasibility_score}%")
+
+
+with tab3:
+    st.info("Recommendations coming soon")
+with tab4:
+    st.info("Dashboard coming soon")
 
 
