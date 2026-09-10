@@ -80,6 +80,211 @@ def risk_assessment():
 
     # Calculate risk when the form is submitted
     if request.method == 'POST':
+        market_competition = request.form.get('market_competition')
+        team_expertise = request.form.get('team_expertise')
+        resource_availability = request.form.get('resource_availability')
+        innovation_level = request.form.get('innovation_level')
+        market_research = request.form.get('market_research')
+        market_opportunity = int(request.form.get('market_opportunity', 50))
+        team_capability = int(request.form.get('team_capability', 50))
+        competitive_advantage = int(request.form.get('competitive_advantage', 50))
+        resource_availability_score = int(
+            request.form.get('resource_availability_score', 50)
+        )
+
+        # 1. Calculate Risk score
+        risk_score = calculate_risk(
+            market_competition,
+            team_expertise,
+            resource_availability,
+            innovation_level,
+            market_research
+        )
+
+        # 2. Get Risk status
+        risk_status = get_risk_status(risk_score)
+
+        # 3. Calculate Success probability
+        success_probability = calculate_success_probability(risk_score)
+
+        # 4. Generate SWOT analysis
+        swot = generate_swot(
+            team_expertise,
+            innovation_level,
+            market_competition,
+            resource_availability,
+            market_research
+        )
+
+        # Format SWOT into dictionary format if it is returned as a string
+        if isinstance(swot, dict):
+            swot_data = swot
+        else:
+            swot_data = {
+                'strengths': str(swot),
+                'weaknesses': 'N/A',
+                'opportunities': 'N/A',
+                'threats': 'N/A'
+            }
+
+        # 5. Calculate Feasibility analysis
+        feasibility_score = feasibility.calculate_feasibility(
+            market_opportunity,
+            team_capability,
+            competitive_advantage,
+            resource_availability_score
+        )
+
+        # 6. Save results to PostgreSQL Database
+        print(f"DEBUG: Current project_id from session is {project_id}")
+        if project_id:
+            try:
+                # Insert SWOT analysis
+                swot_id = database.insert_swot_analysis(project_id, swot_data)
+                print(f"DEBUG: Inserted SWOT with ID {swot_id}")
+
+                # Insert Risk Assessment
+                risk_id = database.insert_risk_assessment(
+                    project_id=project_id,
+                    risk_category="Overall",
+                    risk_score=risk_score,
+                    risk_description=f"Status: {risk_status}",
+                    priority_level="High" if risk_score > 60 else "Medium"
+                )
+                print(f"DEBUG: Inserted Risk Assessment with ID {risk_id}")
+            except Exception as e:
+                print(f"DATABASE ERROR ON INSERT: {e}")
+        else:
+            print("DEBUG WARNING: No project_id found in session. Fill out dashboard form first!")
+
+        return render_template(
+            'risk_assessment.html',
+            project=project,
+            risk_score=risk_score,
+            risk_status=risk_status,
+            success_probability=success_probability,
+            swot=swot,
+            feasibility_score=feasibility_score
+        )
+
+    # Normal GET request
+    return render_template(
+        'risk_assessment.html',
+        project=project
+    )
+
+@app.route('/api/analyze', methods=['POST'])
+def api_analyze():
+    data = request.json
+    industry = data.get('industry', 'Technology')
+    startup_name = data.get('startup_name', '')
+    target_market = data.get('target_market', '')
+    business_model = data.get('business_model', 'SaaS')
+    try:
+        budget = float(data.get('budget', 0))
+    except:
+        budget = 0
+        
+    market_data = market_analysis.get_market_data(industry, target_market, budget)
+    competitors = market_analysis.get_competitor_data(startup_name, industry, business_model)
+    
+    return jsonify({
+        "market_data": market_data,
+        "competitors": competitors
+    })
+
+@app.route('/placeholder')
+def placeholder():
+    return render_template('placeholder.html')
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
+
+
+
+
+'''from flask import Flask, render_template, request, redirect, url_for, session, jsonify
+import database
+import market_analysis
+import secrets
+import feasibility
+from risk_engine import (
+    calculate_risk,
+    get_risk_status,
+    calculate_success_probability
+)
+from swot_analysis import generate_swot
+
+app = Flask(__name__)
+app.secret_key = secrets.token_hex(16)
+
+@app.route('/', methods=['GET', 'POST'])
+def dashboard():
+    if request.method == 'POST':
+        project_data = {
+            'startup_name': request.form.get('startup_name'),
+            'industry': request.form.get('industry'),
+            'business_model': request.form.get('business_model'),
+            'target_market': request.form.get('target_market'),
+            'budget': request.form.get('budget'),
+            'project_description': request.form.get('project_description')
+        }
+        try:
+            project_id = database.insert_project(project_data)
+            session['project_id'] = project_id
+        except Exception as e:
+            print(f"Database error: {e}")
+            session['fallback_project_data'] = project_data
+            
+        return redirect(url_for('dashboard'))
+        
+    project_id = session.get('project_id')
+    project = session.get('fallback_project_data')
+    
+    if project_id:
+        try:
+            db_project = database.get_project(project_id)
+            if db_project:
+                project = db_project
+        except Exception as e:
+            print(f"Database error fetching project: {e}")
+
+    industry = "Technology"
+    startup_name = ""
+    target_market = ""
+    budget = 0
+    business_model = "SaaS"
+
+    if project:
+        industry = project.get('industry', 'Technology')
+        startup_name = project.get('startup_name', '')
+        target_market = project.get('target_market', '')
+        business_model = project.get('business_model', 'SaaS')
+        try:
+            budget = float(project.get('budget', 0))
+        except:
+            budget = 0
+
+    market_data = market_analysis.get_market_data(industry, target_market, budget)
+    competitors = market_analysis.get_competitor_data(startup_name, industry, business_model)
+    
+    return render_template('dashboard.html', market_data=market_data, competitors=competitors, project=project)
+
+@app.route('/risk_assessment', methods=['GET', 'POST'])
+def risk_assessment():
+    project_id = session.get('project_id')
+    project = session.get('fallback_project_data')
+
+    if project_id:
+        try:
+            db_project = database.get_project(project_id)
+            if db_project:
+                project = db_project
+        except Exception as e:
+            print(f"Database error fetching project: {e}")
+
+    # Calculate risk when the form is submitted
+    if request.method == 'POST':
 
         market_competition = request.form.get('market_competition')
         team_expertise = request.form.get('team_expertise')
@@ -92,6 +297,34 @@ def risk_assessment():
         resource_availability_score = int(
             request.form.get('resource_availability_score', 50)
         )
+    # Inside @app.route('/risk_assessment', methods=['GET', 'POST'])
+    if request.method == 'POST':
+        # ... your existing code calculating risk_score, risk_status, swot, etc. ...
+
+        project_id = session.get('project_id')
+        
+        # Print to terminal to verify project_id exists
+        print(f"DEBUG: Current project_id from session is {project_id}")
+
+        if project_id:
+            try:
+                # Insert SWOT analysis
+                swot_id = database.insert_swot_analysis(project_id, swot)
+                print(f"DEBUG: Inserted SWOT with ID {swot_id}")
+
+                # Insert Risk Assessment
+                risk_id = database.insert_risk_assessment(
+                    project_id=project_id,
+                    risk_category="Overall",
+                    risk_score=risk_score,
+                    risk_description=f"Status: {risk_status}",
+                    priority_level="High" if risk_score > 60 else "Medium"
+                )
+                print(f"DEBUG: Inserted Risk Assessment with ID {risk_id}")
+            except Exception as e:
+                print(f"DATABASE ERROR ON INSERT: {e}")
+        else:
+            print("DEBUG WARNING: No project_id found in session. Fill out dashboard form first!")
 
         # Risk score
         risk_score = calculate_risk(
@@ -166,4 +399,5 @@ def placeholder():
     return render_template('placeholder.html')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)'''
+
