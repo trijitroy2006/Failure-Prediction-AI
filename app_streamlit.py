@@ -191,59 +191,136 @@ with tab2:
     from feasibility import calculate_feasibility
     feasibility_score = calculate_feasibility(market_opportunity, team_capability, competitive_advantage, resource_score)
 
+    # Format SWOT bullets as HTML dots
+    def format_swot(items):
+        return "".join([f'<div style="margin-bottom:4px;">• {item}</div>' for item in items])
+    
     st.markdown("<br>", unsafe_allow_html=True)
     
     # FINAL DASHBOARD LAYOUT (3 columns) matching PDF mockup perfectly
     r_col1, r_col2, r_col3 = st.columns([1, 1.5, 1])
     
     with r_col1:
-        st.markdown("#### Risk Score")
         st.markdown(f"""
-        <div style="text-align: center; padding: 20px; border: 1px solid #FCA5A5; border-radius: 8px; background-color: #FEF2F2; margin-bottom: 20px;">
-            <div style="color: #6B7280; font-size: 12px; font-weight: 600; margin-bottom: 8px;">Overall Risk Score</div>
-            <div style="color: #DC2626; font-size: 48px; font-weight: 800; line-height: 1;">{risk_score}</div>
-            <div style="color: #DC2626; font-size: 12px; font-weight: 700; margin-top: 8px;">{risk_status}</div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <h3 style="margin:0; font-size: 16px; color: #111827; font-family: sans-serif;">Risk Score</h3>
+            <span style="color: #DC2626; font-size: 14px;">⚠️</span>
+        </div>
+        <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 24px; text-align: center; margin-bottom: 16px; background: white; font-family: sans-serif;">
+            <div style="color: #6B7280; font-size: 12px; margin-bottom: 16px;">Overall Risk Score</div>
+            <div style="color: #DC2626; font-size: 56px; font-weight: 800; line-height: 1;">{risk_score}</div>
+            <div style="color: #DC2626; font-size: 11px; font-weight: 700; margin-top: 16px;">{risk_status}</div>
+        </div>
+        <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; margin-bottom: 24px; background: white; font-family: sans-serif;">
+            <div style="color: #6B7280; font-size: 12px; margin-bottom: 12px;">Success Probability</div>
+            <div style="background: #E5E7EB; border-radius: 4px; height: 6px; width: 100%; margin-bottom: 8px;">
+                <div style="background: #DC2626; border-radius: 4px; height: 100%; width: {success_probability}%;"></div>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px; font-weight: 600;">
+                <span style="color: #111827;">{success_probability}%</span>
+                <span style="color: #DC2626;">Low</span>
+            </div>
+        </div>
+        <h4 style="font-size: 14px; margin-bottom: 12px; color: #111827; font-family: sans-serif;">Key Risk Factors</h4>
+        <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; background: white; font-family: sans-serif;">
+            <div style="background: #FEF3C7; color: #D97706; padding: 6px; border-radius: 6px; font-size: 16px; width: 32px; height: 32px; display: flex; justify-content: center; align-items: center;">👥</div>
+            <div>
+                <div style="font-size: 13px; font-weight: 600; color: #111827;">Team Expertise</div>
+                <div style="font-size: 11px; color: #6B7280;">{team_expertise} technical experience</div>
+            </div>
+        </div>
+        <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; background: white; font-family: sans-serif;">
+            <div style="background: #D1FAE5; color: #10B981; padding: 6px; border-radius: 6px; font-size: 16px; width: 32px; height: 32px; display: flex; justify-content: center; align-items: center;">💡</div>
+            <div>
+                <div style="font-size: 13px; font-weight: 600; color: #111827;">Innovation Gap</div>
+                <div style="font-size: 11px; color: #6B7280;">{innovation_level} innovation potential</div>
+            </div>
         </div>
         """, unsafe_allow_html=True)
-            
-        st.markdown("**Success Probability**")
-        st.progress(success_probability / 100, text=f"{success_probability}%")
-        
-        st.markdown("<br>**Key Risk Factors**", unsafe_allow_html=True)
-        st.error(f"**Team Expertise**\n\n{team_expertise} technical experience")
-        if market_competition == "High":
-            st.warning("**High Competition**\n\nStrong market rivals")
 
     with r_col2:
-        st.markdown("#### SWOT Analysis")
-        # 2x2 Grid exactly like the mockup
-        swot_c1, swot_c2 = st.columns(2)
-        with swot_c1:
-            st.success("**Strengths**\n" + "\n".join([f"- {s}" for s in swot["Strengths"]]))
-            st.info("**Opportunities**\n" + "\n".join([f"- {o}" for o in swot["Opportunities"]]))
-        with swot_c2:
-            st.error("**Weaknesses**\n" + "\n".join([f"- {w}" for w in swot["Weaknesses"]]))
-            st.warning("**Threats**\n" + "\n".join([f"- {t}" for t in swot["Threats"]]))
-
-    with r_col3:
-        st.markdown("#### Project Feasibility")
-        
-        feas_color = "#059669" if feasibility_score >= 50 else "#DC2626"
-        feas_bg = "#ECFDF5" if feasibility_score >= 50 else "#FEF2F2"
-        feas_border = "#6EE7B7" if feasibility_score >= 50 else "#FCA5A5"
-        
         st.markdown(f"""
-        <div style="text-align: center; padding: 20px; border: 1px solid {feas_border}; border-radius: 8px; background-color: {feas_bg}; margin-bottom: 20px;">
-            <div style="color: #6B7280; font-size: 12px; font-weight: 600; margin-bottom: 8px;">Feasibility Score</div>
-            <div style="color: {feas_color}; font-size: 48px; font-weight: 800; line-height: 1;">{feasibility_score}%</div>
-            <div style="color: {feas_color}; font-size: 11px; font-weight: 600; margin-top: 8px;">Moderate Feasibility with Improvements Needed</div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-family: sans-serif;">
+            <h3 style="margin:0; font-size: 16px; color: #111827;">SWOT Analysis</h3>
+            <span style="color: #6B7280; font-size: 16px;">⊞</span>
+        </div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-family: sans-serif;">
+            <div style="background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 8px; padding: 16px;">
+                <div style="color: #16A34A; font-weight: 600; font-size: 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                    <span style="background: #16A34A; color: white; border-radius: 50%; width: 14px; height: 14px; display: inline-flex; align-items: center; justify-content: center; font-size: 10px;">+</span> Strengths
+                </div>
+                <div style="color: #111827; font-size: 12px; line-height: 1.5;">
+                    {format_swot(swot["Strengths"])}
+                </div>
+            </div>
+            <div style="background: #FEF2F2; border: 1px solid #FECACA; border-radius: 8px; padding: 16px;">
+                <div style="color: #DC2626; font-weight: 600; font-size: 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                    <span style="background: #DC2626; color: white; border-radius: 50%; width: 14px; height: 14px; display: inline-flex; align-items: center; justify-content: center; font-size: 10px;">-</span> Weaknesses
+                </div>
+                <div style="color: #111827; font-size: 12px; line-height: 1.5;">
+                    {format_swot(swot["Weaknesses"])}
+                </div>
+            </div>
+            <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 8px; padding: 16px; min-height: 180px;">
+                <div style="color: #2563EB; font-weight: 600; font-size: 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                    <span style="color: #2563EB; font-size: 16px;">↗</span> Opportunities
+                </div>
+                <div style="color: #111827; font-size: 12px; line-height: 1.5;">
+                    {format_swot(swot["Opportunities"])}
+                </div>
+            </div>
+            <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 8px; padding: 16px; min-height: 180px;">
+                <div style="color: #D97706; font-weight: 600; font-size: 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                    <span style="color: #D97706; font-size: 14px;">⚠️</span> Threats
+                </div>
+                <div style="color: #111827; font-size: 12px; line-height: 1.5;">
+                    {format_swot(swot["Threats"])}
+                </div>
+            </div>
         </div>
         """, unsafe_allow_html=True)
+
+    with r_col3:
+        st.markdown(f"""
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-family: sans-serif;">
+            <h3 style="margin:0; font-size: 16px; color: #111827;">Project Feasibility</h3>
+            <span style="color: white; background: #10B981; border-radius: 50%; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; font-size: 10px;">✔</span>
+        </div>
+        <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 24px; text-align: center; margin-bottom: 24px; background: white; font-family: sans-serif;">
+            <div style="color: #6B7280; font-size: 12px; margin-bottom: 16px;">Feasibility Score</div>
+            <div style="color: #10B981; font-size: 48px; font-weight: 800; line-height: 1;">{feasibility_score}%</div>
+            <div style="color: #9CA3AF; font-size: 10px; margin-top: 16px; line-height: 1.4; padding: 0 10px;">Moderate Feasibility with Significant Improvements Needed</div>
+        </div>
+        <h4 style="font-size: 14px; margin-bottom: 16px; color: #111827; font-family: sans-serif;">Assessment Metrics</h4>
         
-        st.markdown("**Assessment Metrics**")
-        st.progress(team_capability / 100, text=f"Team Capability ({team_capability}%)")
-        st.progress(competitive_advantage / 100, text=f"Competitive Advantage ({competitive_advantage}%)")
-        st.progress(resource_score / 100, text=f"Resource Availability ({resource_score}%)")
+        <div style="margin-bottom: 16px; font-family: sans-serif;">
+            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;">
+                <span style="color: #374151; font-weight: 500;">Team Capability</span>
+                <span style="color: #F59E0B; font-weight: 600;">{team_capability}%</span>
+            </div>
+            <div style="background: #E5E7EB; border-radius: 4px; height: 4px; width: 100%;">
+                <div style="background: #F59E0B; border-radius: 4px; height: 100%; width: {team_capability}%;"></div>
+            </div>
+        </div>
+        <div style="margin-bottom: 16px; font-family: sans-serif;">
+            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;">
+                <span style="color: #374151; font-weight: 500;">Competitive Advantage</span>
+                <span style="color: #DC2626; font-weight: 600;">{competitive_advantage}%</span>
+            </div>
+            <div style="background: #E5E7EB; border-radius: 4px; height: 4px; width: 100%;">
+                <div style="background: #DC2626; border-radius: 4px; height: 100%; width: {competitive_advantage}%;"></div>
+            </div>
+        </div>
+        <div style="margin-bottom: 16px; font-family: sans-serif;">
+            <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px;">
+                <span style="color: #374151; font-weight: 500;">Resource Availability</span>
+                <span style="color: #10B981; font-weight: 600;">{resource_score}%</span>
+            </div>
+            <div style="background: #E5E7EB; border-radius: 4px; height: 4px; width: 100%;">
+                <div style="background: #10B981; border-radius: 4px; height: 100%; width: {resource_score}%;"></div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
 
 with tab3:
