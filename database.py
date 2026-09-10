@@ -82,3 +82,18 @@ def insert_risk_assessment(project_id, risk_category, risk_score, risk_descripti
     cur.close()
     conn.close()
     return risk_id
+    
+def insert_success_prediction(project_id, success_probability, overall_risk_score):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('''
+        INSERT INTO success_predictions (project_id, success_probability, overall_risk_score)
+        VALUES (%s, %s, %s)
+        RETURNING prediction_id;
+    ''', (project_id, success_probability, overall_risk_score))
+    
+    prediction_id = cur.fetchone()[0]
+    conn.commit()
+    cur.close()
+    conn.close()
+    return prediction_id

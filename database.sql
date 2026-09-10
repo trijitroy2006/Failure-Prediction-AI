@@ -28,3 +28,11 @@ CREATE TABLE IF NOT EXISTS risk_assessments (
     risk_description TEXT,
     priority_level VARCHAR(50)
 );
+
+CREATE TABLE IF NOT EXISTS success_predictions (
+    prediction_id SERIAL PRIMARY KEY,
+    project_id INT REFERENCES projects(project_id) ON DELETE CASCADE,
+    success_probability NUMERIC(5, 2),
+    overall_risk_score NUMERIC(5, 2),
+    prediction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

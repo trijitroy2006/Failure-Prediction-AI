@@ -150,6 +150,14 @@ def risk_assessment():
                     priority_level="High" if risk_score > 60 else "Medium"
                 )
                 print(f"DEBUG: Inserted Risk Assessment with ID {risk_id}")
+
+                # Insert Success Prediction record
+                prediction_id = database.insert_success_prediction(
+                    project_id=project_id,
+                    success_probability=success_probability,
+                    overall_risk_score=risk_score
+                )
+                print(f"DEBUG: Inserted Success Prediction with ID {prediction_id}")
             except Exception as e:
                 print(f"DATABASE ERROR ON INSERT: {e}")
         else:
@@ -197,6 +205,11 @@ def placeholder():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
+
+
+
+
+
 
 
 
