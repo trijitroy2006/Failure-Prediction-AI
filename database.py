@@ -4,7 +4,7 @@ from psycopg2.extras import RealDictCursor
 DB_CONFIG = {
     "dbname": "ml_project",
     "user": "postgres",
-    "password": "YOUR_POSTGRES_PASSWORD",
+    "password": "12345678",
     "host": "localhost",
     "port": "5432"
 }
@@ -42,3 +42,44 @@ def get_project(project_id):
     cur.close()
     conn.close()
     return project
+
+def insert_swot_analysis(project_id, swot_data):
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    # Extract lists using the exact capitalized keys from swot_analysis.py
+    # Convert lists into comma-separated strings for PostgreSQL TEXT columns
+    strengths_list = swot_data.get('Strengths', [])
+    weaknesses_list = swot_data.get('Weaknesses', [])
+    opportunities_list = swot_data.get('Opportunities', [])
+    threats_list = swot_data.get('Threats', [])
+
+    strengths = ", ".join(strengths_list) if strengths_list else "N/A"
+    weaknesses = ", ".join(weaknesses_list) if weaknesses_list else "N/A"
+    opportunities = ", ".join(opportunities_list) if opportunities_list else "N/A"
+    threats = ", ".join(threats_list) if threats_list else "N/A"
+
+    cur.execute('''
+        INSERT INTO swot_analysis (project_id, strengths, weaknesses, opportunities, threats)
+        VALUES (%s, %s, %s, %s, %s)
+        RETURNING swot_id;
+    ''', (project_id, strengths, weaknesses, opportunities, threats))
+
+    swot_id = cur.fetchone()[0]
+    conn.commit()
+    cur.close()
+    conn.close()
+    return swot_id
+def insert_risk_assessment(project_id, risk_category, risk_score, risk_description, priority_level):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute('''
+        INSERT INTO risk_assessments (project_id, risk_category, risk_score, risk_description, priority_level)
+        VALUES (%s, %s, %s, %s, %s)
+        RETURNING risk_id;
+    ''', (project_id, risk_category, risk_score, risk_description, priority_level))
+    risk_id = cur.fetchone()[0]
+    conn.commit()
+    cur.close()
+    conn.close()
+    return risk_id
