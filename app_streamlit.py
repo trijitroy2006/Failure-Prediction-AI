@@ -161,24 +161,23 @@ with tab2:
     <h1 style="margin: 0; padding: 0; font-size: 28px; color: #111827; font-weight: 700; font-family: sans-serif;">Risk Assessment & SWOT Analysis</h1>
     <p style="margin: 4px 0 24px 0; color: #6B7280; font-size: 15px; font-family: sans-serif;">AI-powered risk scoring and strategic evaluation</p>
     """, unsafe_allow_html=True)
+
+    if 'project_data' in st.session_state:
+        data = st.session_state['project_data']
+    else:
+        data = {'industry': 'Technology', 'budget': 100000, 'startup_name': 'Demo Project'}
+        
+    # Algorithmically derive inputs from project_data
+    market_competition = "High" if data.get('industry') == 'Technology' else "Medium"
+    team_expertise = "Low" if data.get('budget', 0) < 50000 else "High"
+    resource_availability = "Good" if data.get('budget', 0) >= 100000 else "Limited"
+    innovation_level = "High"
+    market_research = "Moderate"
     
-    with st.expander("⚙️ Configure Assessment Inputs (Click to expand)", expanded=False):
-        col_in1, col_in2, col_in3 = st.columns(3)
-        with col_in1:
-            market_competition = st.selectbox("Market Competition", ["Low", "Medium", "High"], index=2)
-            team_expertise = st.selectbox("Team Expertise", ["Low", "Medium", "High"], index=0)
-        with col_in2:
-            resource_availability = st.selectbox("Resource Availability", ["Limited", "Moderate", "Good"], index=0)
-            innovation_level = st.selectbox("Innovation Level", ["Low", "Medium", "High"], index=1)
-        with col_in3:
-            market_research = st.selectbox("Market Research", ["Limited", "Moderate", "Strong"], index=0)
-            
-        st.markdown("##### Feasibility Inputs")
-        f_col1, f_col2, f_col3, f_col4 = st.columns(4)
-        with f_col1: market_opportunity = st.slider("Market Opp", 0, 100, 45)
-        with f_col2: team_capability = st.slider("Team Cap", 0, 100, 50)
-        with f_col3: competitive_advantage = st.slider("Comp Adv", 0, 100, 35)
-        with f_col4: resource_score = st.slider("Resources", 0, 100, 65)
+    market_opportunity = 45 if market_competition == "High" else 75
+    team_capability = 50 if team_expertise == "Low" else 85
+    competitive_advantage = 35 if innovation_level == "Low" else 70
+    resource_score = 65 if resource_availability == "Good" else 30
 
     from risk_engine import calculate_risk, get_risk_status, calculate_success_probability
     risk_score = calculate_risk(market_competition, team_expertise, resource_availability, innovation_level, market_research)
@@ -204,7 +203,7 @@ with tab2:
         st.markdown(f"""
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
             <h3 style="margin:0; font-size: 16px; color: #111827; font-family: sans-serif;">Risk Score</h3>
-            <span style="color: #DC2626; font-size: 14px;">⚠️</span>
+            <span style="color: #DC2626; font-size: 14px;">&#9888;</span>
         </div>
         <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 24px; text-align: center; margin-bottom: 16px; background: white; font-family: sans-serif;">
             <div style="color: #6B7280; font-size: 12px; margin-bottom: 16px;">Overall Risk Score</div>
@@ -223,14 +222,14 @@ with tab2:
         </div>
         <h4 style="font-size: 14px; margin-bottom: 12px; color: #111827; font-family: sans-serif;">Key Risk Factors</h4>
         <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; background: white; font-family: sans-serif;">
-            <div style="background: #FEF3C7; color: #D97706; padding: 6px; border-radius: 6px; font-size: 16px; width: 32px; height: 32px; display: flex; justify-content: center; align-items: center;">👥</div>
+            <div style="background: #FEF3C7; color: #D97706; padding: 6px; border-radius: 6px; font-size: 16px; width: 32px; height: 32px; display: flex; justify-content: center; align-items: center;">&#128101;</div>
             <div>
                 <div style="font-size: 13px; font-weight: 600; color: #111827;">Team Expertise</div>
                 <div style="font-size: 11px; color: #6B7280;">{team_expertise} technical experience</div>
             </div>
         </div>
         <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 12px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; background: white; font-family: sans-serif;">
-            <div style="background: #D1FAE5; color: #10B981; padding: 6px; border-radius: 6px; font-size: 16px; width: 32px; height: 32px; display: flex; justify-content: center; align-items: center;">💡</div>
+            <div style="background: #D1FAE5; color: #10B981; padding: 6px; border-radius: 6px; font-size: 16px; width: 32px; height: 32px; display: flex; justify-content: center; align-items: center;">&#128161;</div>
             <div>
                 <div style="font-size: 13px; font-weight: 600; color: #111827;">Innovation Gap</div>
                 <div style="font-size: 11px; color: #6B7280;">{innovation_level} innovation potential</div>
@@ -242,7 +241,7 @@ with tab2:
         st.markdown(f"""
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-family: sans-serif;">
             <h3 style="margin:0; font-size: 16px; color: #111827;">SWOT Analysis</h3>
-            <span style="color: #6B7280; font-size: 16px;">⊞</span>
+            <span style="color: #6B7280; font-size: 16px;">&#8862;</span>
         </div>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; font-family: sans-serif;">
             <div style="background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 8px; padding: 16px;">
@@ -263,7 +262,7 @@ with tab2:
             </div>
             <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 8px; padding: 16px; min-height: 180px;">
                 <div style="color: #2563EB; font-weight: 600; font-size: 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
-                    <span style="color: #2563EB; font-size: 16px;">↗</span> Opportunities
+                    <span style="color: #2563EB; font-size: 16px;">&#8599;</span> Opportunities
                 </div>
                 <div style="color: #111827; font-size: 12px; line-height: 1.5;">
                     {format_swot(swot["Opportunities"])}
@@ -271,7 +270,7 @@ with tab2:
             </div>
             <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 8px; padding: 16px; min-height: 180px;">
                 <div style="color: #D97706; font-weight: 600; font-size: 14px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
-                    <span style="color: #D97706; font-size: 14px;">⚠️</span> Threats
+                    <span style="color: #D97706; font-size: 14px;">&#9888;</span> Threats
                 </div>
                 <div style="color: #111827; font-size: 12px; line-height: 1.5;">
                     {format_swot(swot["Threats"])}
@@ -284,7 +283,7 @@ with tab2:
         st.markdown(f"""
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-family: sans-serif;">
             <h3 style="margin:0; font-size: 16px; color: #111827;">Project Feasibility</h3>
-            <span style="color: white; background: #10B981; border-radius: 50%; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; font-size: 10px;">✔</span>
+            <span style="color: white; background: #10B981; border-radius: 50%; width: 18px; height: 18px; display: inline-flex; align-items: center; justify-content: center; font-size: 10px;">&#10004;</span>
         </div>
         <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 24px; text-align: center; margin-bottom: 24px; background: white; font-family: sans-serif;">
             <div style="color: #6B7280; font-size: 12px; margin-bottom: 16px;">Feasibility Score</div>

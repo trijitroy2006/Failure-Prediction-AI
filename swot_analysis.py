@@ -1,36 +1,37 @@
 def generate_swot(team_expertise, innovation_level, market_competition, resource_availability, market_research):
-    strengths = []
-    weaknesses = []
-    opportunities = []
-    threats = []
-
-    # Strengths
+    strengths = ["Unique AI algorithm" if innovation_level == "High" else "Clear value proposition"]
     if team_expertise == "High":
         strengths.append("Strong technical team")
-    if innovation_level == "High":
-        strengths.append("High innovation potential")
+    else:
+        strengths.append("Lean and agile operations")
+    strengths.append("Early mover advantage")
     if resource_availability == "Good":
-        strengths.append("Good resource availability")
+        strengths.append("Scalable architecture")
 
-    # Weaknesses
-    if team_expertise == "Low":
-        weaknesses.append("Limited technical expertise")
+    weaknesses = []
     if market_research == "Limited":
         weaknesses.append("Limited market research")
+    else:
+        weaknesses.append("Niche market focus")
     if resource_availability == "Limited":
-        weaknesses.append("Limited resources")
+        weaknesses.append("Small marketing budget")
+    weaknesses.append("No brand recognition")
+    if team_expertise == "Low":
+        weaknesses.append("Dependency on key personnel")
 
-    # Opportunities
+    opportunities = ["Growing market demand"]
     if market_competition == "Low":
-        opportunities.append("Low market competition")
-    opportunities.append("Potential for market expansion")
-    opportunities.append("Partnership opportunities")
+        opportunities.append("Blue ocean strategy")
+    opportunities.append("Partnership potential")
+    opportunities.append("Expansion to new verticals")
+    opportunities.append("International markets")
 
-    # Threats
+    threats = []
     if market_competition == "High":
-        threats.append("Strong competitors")
-    threats.append("Rapid technology changes")
-    threats.append("Market uncertainty")
+        threats.append("Established competitors")
+    threats.append("Rapid tech changes")
+    threats.append("Regulatory uncertainty")
+    threats.append("Economic downturn")
 
     return {
         "Strengths": strengths,
