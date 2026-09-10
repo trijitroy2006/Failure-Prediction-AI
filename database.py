@@ -47,8 +47,7 @@ def insert_swot_analysis(project_id, swot_data):
     conn = get_db_connection()
     cur = conn.cursor()
 
-    # Extract lists using the exact capitalized keys from swot_analysis.py
-    # Convert lists into comma-separated strings for PostgreSQL TEXT columns
+   
     strengths_list = swot_data.get('Strengths', [])
     weaknesses_list = swot_data.get('Weaknesses', [])
     opportunities_list = swot_data.get('Opportunities', [])
