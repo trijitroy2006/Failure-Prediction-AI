@@ -323,7 +323,157 @@ with tab2:
 
 
 with tab3:
-    st.info("Recommendations coming soon")
+    st.markdown("""
+    <div style="background-color: #FEE2E2; color: #DC2626; padding: 4px 12px; border-radius: 16px; display: inline-block; font-size: 0.75rem; font-weight: 700; margin-bottom: 8px; font-family: sans-serif;">
+        &#128205; MILESTONE 3 &#8226; WEEKS 5-6
+    </div>
+    <h1 style="margin: 0; padding: 0; font-size: 28px; color: #111827; font-weight: 700; font-family: sans-serif;">Recommendations & Strategic Reasoning</h1>
+    <p style="margin: 4px 0 24px 0; color: #6B7280; font-size: 15px; font-family: sans-serif;">AI-powered mitigation strategies and agent workflows</p>
+    """, unsafe_allow_html=True)
+
+    m3_c1, m3_c2, m3_c3 = st.columns([1, 1.2, 1])
+    
+    with m3_c1:
+        st.markdown("""
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+            <h3 style="margin:0; font-size: 16px; color: #111827; font-family: sans-serif;">AI Recommendations</h3>
+            <span style="background: #6D28D9; color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; font-family: sans-serif;">Gemini Powered</span>
+        </div>
+        
+        <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; margin-bottom: 12px; background: white; font-family: sans-serif; border-left: 4px solid #DC2626;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div style="font-weight: 700; font-size: 13px; color: #111827;">Secure Additional Funding</div>
+                <span style="background: #FEE2E2; color: #DC2626; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold;">Critical</span>
+            </div>
+            <div style="font-size: 12px; color: #6B7280; line-height: 1.4;">Extend runway to 18 months through Series A round or strategic partnership</div>
+        </div>
+
+        <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; margin-bottom: 12px; background: white; font-family: sans-serif; border-left: 4px solid #F59E0B;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div style="font-weight: 700; font-size: 13px; color: #111827;">Build Strategic Partnership</div>
+                <span style="background: #FEF3C7; color: #D97706; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold;">High</span>
+            </div>
+            <div style="font-size: 12px; color: #6B7280; line-height: 1.4;">Collaborate with established player for distribution and credibility</div>
+        </div>
+
+        <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; margin-bottom: 12px; background: white; font-family: sans-serif; border-left: 4px solid #F59E0B;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div style="font-weight: 700; font-size: 13px; color: #111827;">Reduce Operational Costs</div>
+                <span style="background: #FEF3C7; color: #D97706; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold;">High</span>
+            </div>
+            <div style="font-size: 12px; color: #6B7280; line-height: 1.4;">Optimize team structure and automate processes to cut monthly burn rate</div>
+        </div>
+
+        <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; margin-bottom: 12px; background: white; font-family: sans-serif; border-left: 4px solid #10B981;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div style="font-weight: 700; font-size: 13px; color: #111827;">Develop MVP First</div>
+                <span style="background: #D1FAE5; color: #059669; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold;">Medium</span>
+            </div>
+            <div style="font-size: 12px; color: #6B7280; line-height: 1.4;">Launch minimum viable product to validate market demand before full build</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with m3_c2:
+        st.markdown("""
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h3 style="margin:0; font-size: 16px; color: #111827; font-family: sans-serif;">Risk Mitigation</h3>
+            <span style="color: #6B7280;">&#128116;</span>
+        </div>
+        
+        <div style="display: flex; gap: 8px; margin-bottom: 16px; font-family: sans-serif;">
+            <span style="background: #DC2626; color: white; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: bold;">All Risks</span>
+            <span style="background: #F3F4F6; color: #4B5563; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 600;">Financial</span>
+            <span style="background: #F3F4F6; color: #4B5563; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 600;">Market</span>
+            <span style="background: #F3F4F6; color: #4B5563; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 600;">Technical</span>
+        </div>
+
+        <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; margin-bottom: 12px; background: white; font-family: sans-serif;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div style="color: #DC2626; font-size: 12px; font-weight: 700;">&#9888; High Competition</div>
+                <span style="color: #10B981; font-size: 10px; font-weight: bold;">High Impact</span>
+            </div>
+            <div style="font-weight: 700; font-size: 13px; color: #111827; margin-bottom: 4px;">Differentiation Strategy</div>
+            <div style="font-size: 12px; color: #6B7280; line-height: 1.4;">Focus on unique AI capabilities and vertical specialization to stand out from competitors</div>
+        </div>
+
+        <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; margin-bottom: 12px; background: white; font-family: sans-serif;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div style="color: #DC2626; font-size: 12px; font-weight: 700;">&#9888; Budget Constraints</div>
+                <span style="color: #10B981; font-size: 10px; font-weight: bold;">Critical Impact</span>
+            </div>
+            <div style="font-weight: 700; font-size: 13px; color: #111827; margin-bottom: 4px;">Revenue Acceleration</div>
+            <div style="font-size: 12px; color: #6B7280; line-height: 1.4;">Implement freemium model with rapid conversion funnel to generate early revenue</div>
+        </div>
+
+        <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; margin-bottom: 12px; background: white; font-family: sans-serif;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div style="color: #DC2626; font-size: 12px; font-weight: 700;">&#9888; Team Skills Gap</div>
+                <span style="color: #10B981; font-size: 10px; font-weight: bold;">Medium Impact</span>
+            </div>
+            <div style="font-weight: 700; font-size: 13px; color: #111827; margin-bottom: 4px;">Strategic Hiring</div>
+            <div style="font-size: 12px; color: #6B7280; line-height: 1.4;">Recruit experienced advisors and key hires in marketing and business development</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with m3_c3:
+        st.markdown("""
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h3 style="margin:0; font-size: 16px; color: #111827; font-family: sans-serif;">LangGraph Agent</h3>
+            <span style="color: #8B5CF6;">&#9881;</span>
+        </div>
+        
+        <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 20px; background: white; font-family: sans-serif; position: relative;">
+            
+            <!-- Vertical Line -->
+            <div style="position: absolute; left: 34px; top: 30px; bottom: 30px; width: 2px; background: #E5E7EB; z-index: 0;"></div>
+            
+            <!-- Step 1 -->
+            <div style="display: flex; gap: 12px; margin-bottom: 24px; position: relative; z-index: 1;">
+                <div style="background: #FEE2E2; color: #DC2626; width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;">&#128190;</div>
+                <div>
+                    <div style="font-size: 13px; font-weight: 700; color: #111827;">Data Ingestion</div>
+                    <div style="font-size: 11px; color: #6B7280; line-height: 1.4; margin-top: 2px;">Collect project details and market data</div>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div style="display: flex; gap: 12px; margin-bottom: 24px; position: relative; z-index: 1;">
+                <div style="background: #FEF3C7; color: #D97706; width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;">&#128202;</div>
+                <div>
+                    <div style="font-size: 13px; font-weight: 700; color: #111827;">Risk Analysis</div>
+                    <div style="font-size: 11px; color: #6B7280; line-height: 1.4; margin-top: 2px;">Evaluate business and technical risks</div>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div style="display: flex; gap: 12px; margin-bottom: 24px; position: relative; z-index: 1;">
+                <div style="background: #E0E7FF; color: #4F46E5; width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;">&#129504;</div>
+                <div>
+                    <div style="font-size: 13px; font-weight: 700; color: #111827;">Strategic Reasoning</div>
+                    <div style="font-size: 11px; color: #6B7280; line-height: 1.4; margin-top: 2px;">Generate mitigation strategies</div>
+                </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div style="display: flex; gap: 12px; margin-bottom: 24px; position: relative; z-index: 1;">
+                <div style="background: #D1FAE5; color: #10B981; width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;">&#10004;</div>
+                <div>
+                    <div style="font-size: 13px; font-weight: 700; color: #111827;">Validation</div>
+                    <div style="font-size: 11px; color: #6B7280; line-height: 1.4; margin-top: 2px;">Cross-check recommendations with data</div>
+                </div>
+            </div>
+
+            <!-- Step 5 -->
+            <div style="display: flex; gap: 12px; position: relative; z-index: 1;">
+                <div style="background: #F3E8FF; color: #9333EA; width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;">&#128196;</div>
+                <div>
+                    <div style="font-size: 13px; font-weight: 700; color: #111827;">Report Generation</div>
+                    <div style="font-size: 11px; color: #6B7280; line-height: 1.4; margin-top: 2px;">Create final assessment report</div>
+                </div>
+            </div>
+
+        </div>
+        """, unsafe_allow_html=True)
 with tab4:
     st.info("Dashboard coming soon")
 
