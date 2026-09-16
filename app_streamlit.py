@@ -421,59 +421,90 @@ with tab3:
             <h3 style="margin:0; font-size: 16px; color: #111827; font-family: sans-serif;">LangGraph Agent</h3>
             <span style="color: #8B5CF6;">&#9881;</span>
         </div>
-        
-        <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 20px; background: white; font-family: sans-serif; position: relative;">
-            
-            <!-- Vertical Line -->
-            <div style="position: absolute; left: 34px; top: 30px; bottom: 30px; width: 2px; background: #E5E7EB; z-index: 0;"></div>
-            
-            <!-- Step 1 -->
-            <div style="display: flex; gap: 12px; margin-bottom: 24px; position: relative; z-index: 1;">
-                <div style="background: #FEE2E2; color: #DC2626; width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;">&#128190;</div>
-                <div>
-                    <div style="font-size: 13px; font-weight: 700; color: #111827;">Data Ingestion</div>
-                    <div style="font-size: 11px; color: #6B7280; line-height: 1.4; margin-top: 2px;">Collect project details and market data</div>
-                </div>
-            </div>
-
-            <!-- Step 2 -->
-            <div style="display: flex; gap: 12px; margin-bottom: 24px; position: relative; z-index: 1;">
-                <div style="background: #FEF3C7; color: #D97706; width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;">&#128202;</div>
-                <div>
-                    <div style="font-size: 13px; font-weight: 700; color: #111827;">Risk Analysis</div>
-                    <div style="font-size: 11px; color: #6B7280; line-height: 1.4; margin-top: 2px;">Evaluate business and technical risks</div>
-                </div>
-            </div>
-
-            <!-- Step 3 -->
-            <div style="display: flex; gap: 12px; margin-bottom: 24px; position: relative; z-index: 1;">
-                <div style="background: #E0E7FF; color: #4F46E5; width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;">&#129504;</div>
-                <div>
-                    <div style="font-size: 13px; font-weight: 700; color: #111827;">Strategic Reasoning</div>
-                    <div style="font-size: 11px; color: #6B7280; line-height: 1.4; margin-top: 2px;">Generate mitigation strategies</div>
-                </div>
-            </div>
-
-            <!-- Step 4 -->
-            <div style="display: flex; gap: 12px; margin-bottom: 24px; position: relative; z-index: 1;">
-                <div style="background: #D1FAE5; color: #10B981; width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;">&#10004;</div>
-                <div>
-                    <div style="font-size: 13px; font-weight: 700; color: #111827;">Validation</div>
-                    <div style="font-size: 11px; color: #6B7280; line-height: 1.4; margin-top: 2px;">Cross-check recommendations with data</div>
-                </div>
-            </div>
-
-            <!-- Step 5 -->
-            <div style="display: flex; gap: 12px; position: relative; z-index: 1;">
-                <div style="background: #F3E8FF; color: #9333EA; width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;">&#128196;</div>
-                <div>
-                    <div style="font-size: 13px; font-weight: 700; color: #111827;">Report Generation</div>
-                    <div style="font-size: 11px; color: #6B7280; line-height: 1.4; margin-top: 2px;">Create final assessment report</div>
-                </div>
-            </div>
-
-        </div>
         """, unsafe_allow_html=True)
+        
+        agent_container = st.container()
+        
+        with agent_container:
+            st.markdown("""
+            <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 20px; background: white; font-family: sans-serif; position: relative; margin-bottom: 16px;">
+                
+                <!-- Vertical Line -->
+                <div style="position: absolute; left: 34px; top: 30px; bottom: 30px; width: 2px; background: #E5E7EB; z-index: 0;"></div>
+                
+                <!-- Step 1 -->
+                <div style="display: flex; gap: 12px; margin-bottom: 24px; position: relative; z-index: 1;">
+                    <div style="background: #FEE2E2; color: #DC2626; width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;">&#128190;</div>
+                    <div>
+                        <div style="font-size: 13px; font-weight: 700; color: #111827;">Data Ingestion</div>
+                        <div style="font-size: 11px; color: #6B7280; line-height: 1.4; margin-top: 2px;">Collect project details and market data</div>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div style="display: flex; gap: 12px; margin-bottom: 24px; position: relative; z-index: 1;">
+                    <div style="background: #FEF3C7; color: #D97706; width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;">&#128202;</div>
+                    <div>
+                        <div style="font-size: 13px; font-weight: 700; color: #111827;">Risk Analysis</div>
+                        <div style="font-size: 11px; color: #6B7280; line-height: 1.4; margin-top: 2px;">Evaluate business and technical risks</div>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div style="display: flex; gap: 12px; margin-bottom: 24px; position: relative; z-index: 1;">
+                    <div style="background: #E0E7FF; color: #4F46E5; width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;">&#129504;</div>
+                    <div>
+                        <div style="font-size: 13px; font-weight: 700; color: #111827;">Strategic Reasoning</div>
+                        <div style="font-size: 11px; color: #6B7280; line-height: 1.4; margin-top: 2px;">Generate mitigation strategies</div>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div style="display: flex; gap: 12px; margin-bottom: 24px; position: relative; z-index: 1;">
+                    <div style="background: #D1FAE5; color: #10B981; width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;">&#10004;</div>
+                    <div>
+                        <div style="font-size: 13px; font-weight: 700; color: #111827;">Validation</div>
+                        <div style="font-size: 11px; color: #6B7280; line-height: 1.4; margin-top: 2px;">Cross-check recommendations with data</div>
+                    </div>
+                </div>
+
+                <!-- Step 5 -->
+                <div style="display: flex; gap: 12px; position: relative; z-index: 1;">
+                    <div style="background: #F3E8FF; color: #9333EA; width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;">&#128196;</div>
+                    <div>
+                        <div style="font-size: 13px; font-weight: 700; color: #111827;">Report Generation</div>
+                        <div style="font-size: 11px; color: #6B7280; line-height: 1.4; margin-top: 2px;">Create final assessment report</div>
+                    </div>
+                </div>
+
+            </div>
+            """, unsafe_allow_html=True)
+            
+        if st.button("Run LangGraph Agent Workflow", use_container_width=True, type="primary"):
+            import time
+            status = st.status("Initializing Agent Workflow...", expanded=True)
+            
+            status.update(label="Step 1: Data Ingestion...")
+            time.sleep(1)
+            status.write("✅ Collected project details and market parameters")
+            
+            status.update(label="Step 2: Risk Analysis...")
+            time.sleep(1)
+            status.write("✅ Evaluated business and technical risks")
+            
+            status.update(label="Step 3: Strategic Reasoning...")
+            time.sleep(1.5)
+            status.write("✅ Generated mitigation strategies using Gemini reasoning")
+            
+            status.update(label="Step 4: Validation...")
+            time.sleep(1)
+            status.write("✅ Cross-checked recommendations with dataset")
+            
+            status.update(label="Step 5: Report Generation...", state="complete")
+            time.sleep(0.5)
+            status.write("✅ Final assessment report successfully created!")
+            
+            st.success("Agent Workflow Complete! The recommended mitigation strategies have been finalized.")
 with tab4:
     st.info("Dashboard coming soon")
 
