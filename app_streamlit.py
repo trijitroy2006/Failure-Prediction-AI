@@ -379,14 +379,21 @@ with tab3:
 <h3 style="margin:0; font-size: 16px; color: #111827; font-family: sans-serif;">Risk Mitigation</h3>
 <span style="color: #6B7280;">&#128116;</span>
 </div>
+""", unsafe_allow_html=True)
 
-<div style="display: flex; gap: 8px; margin-bottom: 16px; font-family: sans-serif;">
-<span style="background: #DC2626; color: white; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: bold;">All Risks</span>
-<span style="background: #F3F4F6; color: #4B5563; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 600;">Financial</span>
-<span style="background: #F3F4F6; color: #4B5563; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 600;">Market</span>
-<span style="background: #F3F4F6; color: #4B5563; padding: 4px 12px; border-radius: 16px; font-size: 11px; font-weight: 600;">Technical</span>
-</div>
+        selected_risk = st.pills(
+            "Risk Category", 
+            ["All Risks", "Financial", "Market", "Technical"], 
+            default="All Risks", 
+            label_visibility="collapsed",
+            key="selected_risk_category"
+        )
+        
+        if not selected_risk:
+            selected_risk = "All Risks"
 
+        if selected_risk in ["All Risks", "Market"]:
+            st.markdown("""
 <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; margin-bottom: 12px; background: white; font-family: sans-serif;">
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
 <div style="color: #DC2626; font-size: 12px; font-weight: 700;">&#9888; High Competition</div>
@@ -395,7 +402,10 @@ with tab3:
 <div style="font-weight: 700; font-size: 13px; color: #111827; margin-bottom: 4px;">Differentiation Strategy</div>
 <div style="font-size: 12px; color: #6B7280; line-height: 1.4;">Focus on unique AI capabilities and vertical specialization to stand out from competitors</div>
 </div>
+""", unsafe_allow_html=True)
 
+        if selected_risk in ["All Risks", "Financial"]:
+            st.markdown("""
 <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; margin-bottom: 12px; background: white; font-family: sans-serif;">
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
 <div style="color: #DC2626; font-size: 12px; font-weight: 700;">&#9888; Budget Constraints</div>
@@ -404,7 +414,10 @@ with tab3:
 <div style="font-weight: 700; font-size: 13px; color: #111827; margin-bottom: 4px;">Revenue Acceleration</div>
 <div style="font-size: 12px; color: #6B7280; line-height: 1.4;">Implement freemium model with rapid conversion funnel to generate early revenue</div>
 </div>
+""", unsafe_allow_html=True)
 
+        if selected_risk in ["All Risks", "Technical"]:
+            st.markdown("""
 <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; margin-bottom: 12px; background: white; font-family: sans-serif;">
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
 <div style="color: #DC2626; font-size: 12px; font-weight: 700;">&#9888; Team Skills Gap</div>
