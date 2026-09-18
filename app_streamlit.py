@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import market_analysis
+# import textwrap
 
 
 st.set_page_config(page_title="Failure Prediction AI", layout="wide", initial_sidebar_state="collapsed")
@@ -180,15 +181,57 @@ with tab2:
     resource_score = 65 if resource_availability == "Good" else 30
 
     from risk_engine import calculate_risk, get_risk_status, calculate_success_probability
+    from mitigation_engine import generate_mitigation
+    from recommendation_engine import generate_recommendations
     risk_score = calculate_risk(market_competition, team_expertise, resource_availability, innovation_level, market_research)
     risk_status = get_risk_status(risk_score)
     success_probability = calculate_success_probability(risk_score)
+
+    # Prepare risk data for Milestone 3 mitigation engine
+    risk_data = [
+        {
+            "risk_category": "Market",
+            "risk_score": 80 if market_competition == "High" else 50,
+            "risk_description": "High competitor density",
+            "priority_level": "High" if market_competition == "High" else "Medium"
+        },
+        {
+            "risk_category": "Financial",
+            "risk_score": 75 if data.get("budget", 0) < 50000 else 45,
+            "risk_description": "Budget constraints",
+            "priority_level": "High" if data.get("budget", 0) < 50000 else "Medium"
+        },
+        {
+            "risk_category": "Technical",
+            "risk_score": 80 if team_expertise == "Low" else 40,
+            "risk_description": "Limited technical expertise",
+            "priority_level": "High" if team_expertise == "Low" else "Medium"
+        }
+    ]
+
+    # Generate Milestone 3 mitigation strategies
+    mitigation_results = generate_mitigation(risk_data)
 
     from swot_analysis import generate_swot
     swot = generate_swot(team_expertise, innovation_level, market_competition, resource_availability, market_research)
 
     from feasibility import calculate_feasibility
     feasibility_score = calculate_feasibility(market_opportunity, team_capability, competitive_advantage, resource_score)
+
+    recommendation_results = generate_recommendations(
+        data,
+        {
+            "market_competition": market_competition,
+            "team_expertise": team_expertise,
+            "resource_availability": resource_availability,
+            "innovation_level": innovation_level,
+            "market_research": market_research,
+            "risk_score": risk_score
+        },
+        swot,
+        feasibility_score
+    )
+   
 
     # Format SWOT bullets as HTML dots
     def format_swot(items):
@@ -336,42 +379,60 @@ with tab3:
     with m3_c1:
         st.markdown("""
 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
-<h3 style="margin:0; font-size: 16px; color: #111827; font-family: sans-serif;">AI Recommendations</h3>
-<span style="background: #6D28D9; color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; font-family: sans-serif;">Gemini Powered</span>
-</div>
+        <h3 style="margin:0; font-size: 16px; color: #111827; font-family: sans-serif;">AI Recommendations</h3>
+        <span style="background: #6D28D9; color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; font-family: sans-serif;">AI Powered</span>
+        </div>
+        """, unsafe_allow_html=True)
 
-<div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; margin-bottom: 12px; background: white; font-family: sans-serif; border-left: 4px solid #DC2626;">
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-<div style="font-weight: 700; font-size: 13px; color: #111827;">Secure Additional Funding</div>
-<span style="background: #FEE2E2; color: #DC2626; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold;">Critical</span>
-</div>
-<div style="font-size: 12px; color: #6B7280; line-height: 1.4;">Extend runway to 18 months through Series A round or strategic partnership</div>
-</div>
+        for rec in recommendation_results["recommendations"]:
+            st.markdown(f"""
+            <div style="
+                border: 1px solid #E5E7EB;
+                border-radius: 8px;
+                padding: 16px;
+                margin-bottom: 12px;
+                background: white;
+                font-family: sans-serif;
+                border-left: 4px solid #6D28D9;
+            ">
+                <div style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 8px;
+                ">
+                    <div style="
+                        font-weight: 700;
+                        font-size: 13px;
+                        color: #111827;
+                    ">
+                        {rec["title"]}
+                    </div>
 
-<div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; margin-bottom: 12px; background: white; font-family: sans-serif; border-left: 4px solid #F59E0B;">
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-<div style="font-weight: 700; font-size: 13px; color: #111827;">Build Strategic Partnership</div>
-<span style="background: #FEF3C7; color: #D97706; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold;">High</span>
-</div>
-<div style="font-size: 12px; color: #6B7280; line-height: 1.4;">Collaborate with established player for distribution and credibility</div>
-</div>
+                    <span style="
+                        background: #F3E8FF;
+                        color: #6D28D9;
+                        padding: 2px 8px;
+                        border-radius: 12px;
+                        font-size: 10px;
+                        font-weight: bold;
+                    ">
+                        {rec["priority"]}
+                    </span>
+                </div>
 
-<div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; margin-bottom: 12px; background: white; font-family: sans-serif; border-left: 4px solid #F59E0B;">
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-<div style="font-weight: 700; font-size: 13px; color: #111827;">Reduce Operational Costs</div>
-<span style="background: #FEF3C7; color: #D97706; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold;">High</span>
-</div>
-<div style="font-size: 12px; color: #6B7280; line-height: 1.4;">Optimize team structure and automate processes to cut monthly burn rate</div>
-</div>
-
-<div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; margin-bottom: 12px; background: white; font-family: sans-serif; border-left: 4px solid #10B981;">
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-<div style="font-weight: 700; font-size: 13px; color: #111827;">Develop MVP First</div>
-<span style="background: #D1FAE5; color: #059669; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold;">Medium</span>
-</div>
-<div style="font-size: 12px; color: #6B7280; line-height: 1.4;">Launch minimum viable product to validate market demand before full build</div>
-</div>
-""", unsafe_allow_html=True)
+                <div style="
+                    font-size: 12px;
+                    color: #6B7280;
+                    line-height: 1.5;
+                ">
+                    <b>Category:</b> {rec["category"]}<br><br>
+                    <b>Problem:</b> {rec["problem"]}<br><br>
+                    <b>Recommendation:</b> {rec["action"]}<br><br>
+                    <b>Risk Reduction:</b> {rec["risk_reduction"]}
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
 
     with m3_c2:
         st.markdown("""
@@ -392,41 +453,74 @@ with tab3:
         if not selected_risk:
             selected_risk = "All Risks"
 
-        if selected_risk in ["All Risks", "Market"]:
-            st.markdown("""
-<div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; margin-bottom: 12px; background: white; font-family: sans-serif;">
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-<div style="color: #DC2626; font-size: 12px; font-weight: 700;">&#9888; High Competition</div>
-<span style="color: #10B981; font-size: 10px; font-weight: bold;">High Impact</span>
-</div>
-<div style="font-weight: 700; font-size: 13px; color: #111827; margin-bottom: 4px;">Differentiation Strategy</div>
-<div style="font-size: 12px; color: #6B7280; line-height: 1.4;">Focus on unique AI capabilities and vertical specialization to stand out from competitors</div>
-</div>
-""", unsafe_allow_html=True)
+        # Display mitigation results generated by mitigation_engine.py
+        for mitigation in mitigation_results:
 
-        if selected_risk in ["All Risks", "Financial"]:
-            st.markdown("""
-<div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; margin-bottom: 12px; background: white; font-family: sans-serif;">
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-<div style="color: #DC2626; font-size: 12px; font-weight: 700;">&#9888; Budget Constraints</div>
-<span style="color: #10B981; font-size: 10px; font-weight: bold;">Critical Impact</span>
-</div>
-<div style="font-weight: 700; font-size: 13px; color: #111827; margin-bottom: 4px;">Revenue Acceleration</div>
-<div style="font-size: 12px; color: #6B7280; line-height: 1.4;">Implement freemium model with rapid conversion funnel to generate early revenue</div>
-</div>
-""", unsafe_allow_html=True)
+            category = mitigation["category"]
 
-        if selected_risk in ["All Risks", "Technical"]:
-            st.markdown("""
-<div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 16px; margin-bottom: 12px; background: white; font-family: sans-serif;">
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-<div style="color: #DC2626; font-size: 12px; font-weight: 700;">&#9888; Team Skills Gap</div>
-<span style="color: #10B981; font-size: 10px; font-weight: bold;">Medium Impact</span>
-</div>
-<div style="font-weight: 700; font-size: 13px; color: #111827; margin-bottom: 4px;">Strategic Hiring</div>
-<div style="font-size: 12px; color: #6B7280; line-height: 1.4;">Recruit experienced advisors and key hires in marketing and business development</div>
-</div>
-""", unsafe_allow_html=True)
+            # Apply selected category filter
+            if selected_risk != "All Risks" and category != selected_risk:
+                continue
+
+            st.markdown(f"""
+            <div style="
+                border: 1px solid #E5E7EB;
+                border-radius: 8px;
+                padding: 16px;
+                margin-bottom: 12px;
+                background: white;
+                font-family: sans-serif;
+            ">
+
+                <div style="
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 8px;
+                ">
+
+                    <div style="
+                        color: #DC2626;
+                        font-size: 12px;
+                        font-weight: 700;
+                    ">
+                        &#9888; {mitigation["risk"]}
+                    </div>
+
+                    <span style="
+                        color: #10B981;
+                        font-size: 10px;
+                        font-weight: bold;
+                    ">
+                        {mitigation["impact"]} Impact
+                    </span>
+
+                </div>
+
+                <div style="
+                    font-weight: 700;
+                    font-size: 13px;
+                    color: #111827;
+                    margin-bottom: 8px;
+                ">
+                    {mitigation["mitigation_strategy"]}
+                </div>
+
+                <div style="
+                    font-size: 12px;
+                    color: #6B7280;
+                    line-height: 1.5;
+                ">
+                    <b>Preventive Action:</b>
+                    {mitigation["preventive_action"]}
+                    <br><br>
+
+                    <b>Contingency Action:</b>
+                    {mitigation["contingency_action"]}
+                </div>
+
+            </div>
+            """, unsafe_allow_html=True)
 
     with m3_c3:
         st.markdown("""
