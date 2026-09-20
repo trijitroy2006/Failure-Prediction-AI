@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import market_analysis
-# import textwrap
+import textwrap
 
 
 st.set_page_config(page_title="Failure Prediction AI", layout="wide", initial_sidebar_state="collapsed")
@@ -183,6 +183,7 @@ with tab2:
     from risk_engine import calculate_risk, get_risk_status, calculate_success_probability
     from mitigation_engine import generate_mitigation
     from recommendation_engine import generate_recommendations
+    from llm_service import generate_llm_recommendations
     risk_score = calculate_risk(market_competition, team_expertise, resource_availability, innovation_level, market_research)
     risk_status = get_risk_status(risk_score)
     success_probability = calculate_success_probability(risk_score)
@@ -218,26 +219,26 @@ with tab2:
     from feasibility import calculate_feasibility
     feasibility_score = calculate_feasibility(market_opportunity, team_capability, competitive_advantage, resource_score)
 
-    recommendation_results = generate_recommendations(
-        data,
-        {
-            "market_competition": market_competition,
-            "team_expertise": team_expertise,
-            "resource_availability": resource_availability,
-            "innovation_level": innovation_level,
-            "market_research": market_research,
-            "risk_score": risk_score
-        },
-        swot,
-        feasibility_score
-    )
-   
+    risk_input_data = {
+        "market_competition": market_competition,
+        "team_expertise": team_expertise,
+        "resource_availability": resource_availability,
+        "innovation_level": innovation_level,
+        "market_research": market_research,
+        "risk_score": risk_score
+    }
+
+    llm_recommendations = generate_llm_recommendations(data, risk_input_data, swot, feasibility_score)
+
+    if llm_recommendations:
+        recommendation_results = {"recommendations": llm_recommendations}
+    else:
+        recommendation_results = generate_recommendations(data, risk_input_data, swot, feasibility_score)
 
     # Format SWOT bullets as HTML dots
     def format_swot(items):
         return "".join([f'<div style="margin-bottom:4px;">• {item}</div>' for item in items])
-    
-    st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
     
     # FINAL DASHBOARD LAYOUT (3 columns) matching PDF mockup perfectly
     r_col1, r_col2, r_col3 = st.columns([1, 1.5, 1])
@@ -384,63 +385,38 @@ with tab3:
         </div>
         """, unsafe_allow_html=True)
 
+        
         for rec in recommendation_results["recommendations"]:
-            st.markdown(f"""
-            <div style="
-                border: 1px solid #E5E7EB;
-                border-radius: 8px;
-                padding: 16px;
-                margin-bottom: 12px;
-                background: white;
-                font-family: sans-serif;
-                border-left: 4px solid #6D28D9;
-            ">
-                <div style="
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    margin-bottom: 8px;
-                ">
-                    <div style="
-                        font-weight: 700;
-                        font-size: 13px;
-                        color: #111827;
-                    ">
-                        {rec["title"]}
-                    </div>
-
-                    <span style="
-                        background: #F3E8FF;
-                        color: #6D28D9;
-                        padding: 2px 8px;
-                        border-radius: 12px;
-                        font-size: 10px;
-                        font-weight: bold;
-                    ">
-                        {rec["priority"]}
-                    </span>
-                </div>
-
-                <div style="
-                    font-size: 12px;
-                    color: #6B7280;
-                    line-height: 1.5;
-                ">
-                    <b>Category:</b> {rec["category"]}<br><br>
-                    <b>Problem:</b> {rec["problem"]}<br><br>
-                    <b>Recommendation:</b> {rec["action"]}<br><br>
-                    <b>Risk Reduction:</b> {rec["risk_reduction"]}
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-
+            card_html = f"""
+<div style="
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+    background: white;
+    font-family: sans-serif;
+    border-left: 4px solid #6D28D9;
+">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div style="font-weight: 700; font-size: 13px; color: #111827;">{rec["title"]}</div>
+        <span style="background: #F3E8FF; color: #6D28D9; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold;">{rec["priority"]}</span>
+    </div>
+    <div style="font-size: 12px; color: #6B7280; line-height: 1.5;">
+        <b>Category:</b> {rec["category"]}<br><br>
+        <b>Problem:</b> {rec["problem"]}<br><br>
+        <b>Recommendation:</b> {rec["action"]}<br><br>
+        <b>Risk Reduction:</b> {rec["risk_reduction"]}
+    </div>
+</div>
+"""
+            st.markdown(textwrap.dedent(card_html), unsafe_allow_html=True)
     with m3_c2:
         st.markdown("""
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
 <h3 style="margin:0; font-size: 16px; color: #111827; font-family: sans-serif;">Risk Mitigation</h3>
 <span style="color: #6B7280;">&#128116;</span>
 </div>
-""", unsafe_allow_html=True)
+""",  unsafe_allow_html=True)
 
         selected_risk = st.pills(
             "Risk Category", 
@@ -462,66 +438,29 @@ with tab3:
             if selected_risk != "All Risks" and category != selected_risk:
                 continue
 
-            st.markdown(f"""
-            <div style="
-                border: 1px solid #E5E7EB;
-                border-radius: 8px;
-                padding: 16px;
-                margin-bottom: 12px;
-                background: white;
-                font-family: sans-serif;
-            ">
-
-                <div style="
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    margin-bottom: 8px;
-                ">
-
-                    <div style="
-                        color: #DC2626;
-                        font-size: 12px;
-                        font-weight: 700;
-                    ">
-                        &#9888; {mitigation["risk"]}
-                    </div>
-
-                    <span style="
-                        color: #10B981;
-                        font-size: 10px;
-                        font-weight: bold;
-                    ">
-                        {mitigation["impact"]} Impact
-                    </span>
-
-                </div>
-
-                <div style="
-                    font-weight: 700;
-                    font-size: 13px;
-                    color: #111827;
-                    margin-bottom: 8px;
-                ">
-                    {mitigation["mitigation_strategy"]}
-                </div>
-
-                <div style="
-                    font-size: 12px;
-                    color: #6B7280;
-                    line-height: 1.5;
-                ">
-                    <b>Preventive Action:</b>
-                    {mitigation["preventive_action"]}
-                    <br><br>
-
-                    <b>Contingency Action:</b>
-                    {mitigation["contingency_action"]}
-                </div>
-
-            </div>
-            """, unsafe_allow_html=True)
-
+            card_html = f"""
+<div style="
+    border: 1px solid #E5E7EB;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+    background: white;
+    font-family: sans-serif;
+">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div style="color: #DC2626; font-size: 12px; font-weight: 700;">&#9888; {mitigation["risk"]}</div>
+        <span style="color: #10B981; font-size: 10px; font-weight: bold;">{mitigation["impact"]} Impact</span>
+    </div>
+    <div style="font-weight: 700; font-size: 13px; color: #111827; margin-bottom: 8px;">
+        {mitigation["mitigation_strategy"]}
+    </div>
+    <div style="font-size: 12px; color: #6B7280; line-height: 1.5;">
+        <b>Preventive Action:</b> {mitigation["preventive_action"]}<br><br>
+        <b>Contingency Action:</b> {mitigation["contingency_action"]}
+    </div>
+</div>
+"""
+            st.markdown(textwrap.dedent(card_html), unsafe_allow_html=True)
     with m3_c3:
         st.markdown("""
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
@@ -529,9 +468,9 @@ with tab3:
 <span style="color: #8B5CF6;">&#9881;</span>
 </div>
 """, unsafe_allow_html=True)
-        
+
         agent_container = st.container()
-        
+
         with agent_container:
             st.markdown("""
 <div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 20px; background: white; font-family: sans-serif; position: relative; margin-bottom: 16px;">
@@ -580,31 +519,31 @@ with tab3:
 
 </div>
 """, unsafe_allow_html=True)
-            
+
         if st.button("Run LangGraph Agent Workflow", use_container_width=True, type="primary"):
             import time
             status = st.status("Initializing Agent Workflow...", expanded=True)
-            
+
             status.update(label="Step 1: Data Ingestion...")
             time.sleep(1)
             status.write("✅ Collected project details and market parameters")
-            
+
             status.update(label="Step 2: Risk Analysis...")
             time.sleep(1)
             status.write("✅ Evaluated business and technical risks")
-            
+
             status.update(label="Step 3: Strategic Reasoning...")
             time.sleep(1.5)
             status.write("✅ Generated mitigation strategies using Gemini reasoning")
-            
+
             status.update(label="Step 4: Validation...")
             time.sleep(1)
             status.write("✅ Cross-checked recommendations with dataset")
-            
+
             status.update(label="Step 5: Report Generation...", state="complete")
             time.sleep(0.5)
             status.write("✅ Final assessment report successfully created!")
-            
+
             st.success("Agent Workflow Complete! The recommended mitigation strategies have been finalized.")
 with tab4:
     st.info("Dashboard coming soon")
