@@ -1,12 +1,13 @@
 import psycopg2
+import os
 from psycopg2.extras import RealDictCursor
 
 DB_CONFIG = {
-    "dbname": "ml_project",
-    "user": "postgres",
-    "password": "12345678",
-    "host": "localhost",
-    "port": "5432"
+    "dbname": os.getenv("POSTGRES_DB", "ml_project"),
+    "user": os.getenv("POSTGRES_USER", "postgres"),
+    "password": os.getenv("POSTGRES_PASSWORD", ""),
+    "host": os.getenv("POSTGRES_HOST", "localhost"),
+    "port": os.getenv("POSTGRES_PORT", "5432")
 }
 
 def get_db_connection():

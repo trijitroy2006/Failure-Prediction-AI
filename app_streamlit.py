@@ -182,8 +182,7 @@ with tab2:
 
     from risk_engine import calculate_risk, get_risk_status, calculate_success_probability
     from mitigation_engine import generate_mitigation
-    from recommendation_engine import generate_recommendations
-    from llm_service import generate_llm_recommendations
+    from improvement_engine import generate_improvements
     risk_score = calculate_risk(market_competition, team_expertise, resource_availability, innovation_level, market_research)
     risk_status = get_risk_status(risk_score)
     success_probability = calculate_success_probability(risk_score)
@@ -228,12 +227,11 @@ with tab2:
         "risk_score": risk_score
     }
 
-    llm_recommendations = generate_llm_recommendations(data, risk_input_data, swot, feasibility_score)
-
-    if llm_recommendations:
-        recommendation_results = {"recommendations": llm_recommendations}
-    else:
-        recommendation_results = generate_recommendations(data, risk_input_data, swot, feasibility_score)
+    recommendation_results = {
+        "recommendations": generate_improvements(
+            data, risk_input_data, swot, feasibility_score
+        )
+    }
 
     # Format SWOT bullets as HTML dots
     def format_swot(items):
@@ -380,13 +378,20 @@ with tab3:
     with m3_c1:
         st.markdown("""
 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
-        <h3 style="margin:0; font-size: 16px; color: #111827; font-family: sans-serif;">AI Recommendations</h3>
+        <h3 style="margin:0; font-size: 16px; color: #111827; font-family: sans-serif;">Project Improvements</h3>
         <span style="background: #6D28D9; color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; font-family: sans-serif;">AI Powered</span>
         </div>
         """, unsafe_allow_html=True)
 
         
         for rec in recommendation_results["recommendations"]:
+            improvement_steps = rec.get("steps") or [
+                rec.get("action", "Review this project area and define a corrective action.")
+            ]
+            improvement_benefit = rec.get(
+                "improvement",
+                rec.get("risk_reduction", "This action supports stronger project execution."),
+            )
             card_html = f"""
 <div style="
     border: 1px solid #E5E7EB;
@@ -404,8 +409,9 @@ with tab3:
     <div style="font-size: 12px; color: #6B7280; line-height: 1.5;">
         <b>Category:</b> {rec["category"]}<br><br>
         <b>Problem:</b> {rec["problem"]}<br><br>
-        <b>Recommendation:</b> {rec["action"]}<br><br>
-        <b>Risk Reduction:</b> {rec["risk_reduction"]}
+        <b>Improvement Steps:</b><br>
+        {''.join(f'{index}. {step}<br>' for index, step in enumerate(improvement_steps, start=1))}<br>
+        <b>How This Supports the Project:</b> {improvement_benefit}
     </div>
 </div>
 """
