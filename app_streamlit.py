@@ -395,39 +395,214 @@ with tab3:
         <h3 style="margin:0; font-size: 16px; color: #111827; font-family: sans-serif;">Improvements</h3>
         <span style="background: #6D28D9; color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; font-family: sans-serif;">AI Powered</span>
         </div>
+<style>
+.improvement-card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 12px;
+}
+.improvement-flip-card {
+    min-height: 238px;
+    perspective: 1200px;
+    font-family: sans-serif;
+}
+.improvement-flip-inner {
+    position: relative;
+    width: 100%;
+    min-height: 238px;
+    transition: transform 0.7s cubic-bezier(.2,.7,.2,1);
+    transform-style: preserve-3d;
+}
+.improvement-flip-card:hover .improvement-flip-inner,
+.improvement-flip-card:focus-within .improvement-flip-inner {
+    transform: rotateY(180deg);
+}
+.improvement-face {
+    position: absolute;
+    inset: 0;
+    min-height: 238px;
+    padding: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.72);
+    border-radius: 16px;
+    box-sizing: border-box;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    box-shadow: 0 16px 32px rgba(31, 41, 55, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    overflow: hidden;
+}
+.improvement-front {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.82), rgba(239, 246, 255, 0.58));
+    backdrop-filter: blur(18px) saturate(135%);
+    -webkit-backdrop-filter: blur(18px) saturate(135%);
+}
+.improvement-back {
+    background: linear-gradient(135deg, rgba(245, 243, 255, 0.94), rgba(224, 242, 254, 0.84));
+    backdrop-filter: blur(18px) saturate(135%);
+    -webkit-backdrop-filter: blur(18px) saturate(135%);
+    transform: rotateY(180deg);
+    overflow-y: auto;
+}
+.improvement-face h4 {
+    margin: 0 0 10px 0;
+    color: #111827;
+    font-size: 15px;
+    line-height: 1.35;
+}
+.improvement-face p,
+.improvement-face li {
+    color: #4B5563;
+    font-size: 12px;
+    line-height: 1.55;
+}
+.improvement-face ul {
+    margin: 6px 0 14px 18px;
+    padding: 0;
+}
+.improvement-label {
+    color: #6D28D9;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+.improvement-priority {
+    float: right;
+    color: #6D28D9;
+    background: rgba(237, 233, 254, 0.9);
+    border: 1px solid rgba(196, 181, 253, 0.7);
+    border-radius: 999px;
+    padding: 3px 9px;
+    font-size: 10px;
+    font-weight: 700;
+}
+.improvement-hint {
+    margin-top: 16px;
+    color: #9CA3AF;
+    font-size: 10px;
+}
+@media (max-width: 900px) {
+    .improvement-card-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+@media (max-width: 620px) {
+    .improvement-card-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
         """, unsafe_allow_html=True)
 
-        
+        improvement_cards = []
         for rec in recommendation_results["recommendations"]:
+            steps = rec.get("steps") or [rec.get("action", "Review this project area and define a corrective action.")]
+            steps_html = "".join(f"<li>{step}</li>" for step in steps)
+            recommendation_html = "".join(
+                f"{index}. {step}<br>" for index, step in enumerate(steps, start=1)
+            )
             card_html = f"""
-<div style="
-    border: 1px solid #E5E7EB;
-    border-radius: 8px;
-    padding: 16px;
-    margin-bottom: 12px;
-    background: white;
-    font-family: sans-serif;
-    border-left: 4px solid #6D28D9;
-">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-        <div style="font-weight: 700; font-size: 13px; color: #111827;">{rec["title"]}</div>
-        <span style="background: #F3E8FF; color: #6D28D9; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold;">{rec["priority"]}</span>
+<div class="improvement-flip-card" tabindex="0">
+  <div class="improvement-flip-inner">
+    <div class="improvement-face improvement-front">
+      <span class="improvement-label">{rec["category"]}</span>
+      <span class="improvement-priority">{rec["priority"]}</span>
+      <h4>{rec["title"]}</h4>
+      <div class="improvement-label">Problem</div>
+      <p>{rec["problem"]}</p>
     </div>
-    <div style="font-size: 12px; color: #6B7280; line-height: 1.5;">
-        <b>Category:</b> {rec["category"]}<br><br>
-        <b>Problem:</b> {rec["problem"]}<br><br>
-        <b>Recommendation:</b> {rec["action"]}<br><br>
-        <b>Risk Reduction:</b> {rec["risk_reduction"]}
+    <div class="improvement-face improvement-back">
+      <div class="improvement-label">Solution Steps</div>
+      <ul>{steps_html}</ul>
+      <div class="improvement-label">Recommendation</div>
+    <p>{recommendation_html}</p>
+      <div class="improvement-label">Risk Reduction</div>
+      <p>{rec["risk_reduction"]}</p>
     </div>
+  </div>
 </div>
 """
-            st.markdown(textwrap.dedent(card_html), unsafe_allow_html=True)
+            improvement_cards.append(textwrap.dedent(card_html))
+        st.markdown(
+            '<div class="improvement-card-grid">'
+            + "".join(improvement_cards)
+            + "</div>",
+            unsafe_allow_html=True,
+        )
     with risk_mitigation_tab:
         st.markdown("""
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
 <h3 style="margin:0; font-size: 16px; color: #111827; font-family: sans-serif;">Risk Mitigation</h3>
 <span style="color: #6B7280;">&#128116;</span>
 </div>
+<style>
+.risk-card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 12px;
+}
+.risk-glass-card {
+    min-height: 220px;
+    padding: 16px;
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.58);
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.38), rgba(153, 246, 228, 0.2));
+    backdrop-filter: blur(24px) saturate(165%);
+    -webkit-backdrop-filter: blur(24px) saturate(165%);
+    box-shadow: 0 14px 28px rgba(31, 41, 55, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.72), inset 0 -1px 0 rgba(255, 255, 255, 0.18);
+    font-family: sans-serif;
+}
+.risk-glass-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.risk-glass-card-risk {
+    color: #DC2626;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+.risk-glass-card-impact {
+    flex-shrink: 0;
+    color: #047857;
+    background: rgba(209, 250, 229, 0.86);
+    border: 1px solid rgba(110, 231, 183, 0.7);
+    border-radius: 999px;
+    padding: 3px 8px;
+    font-size: 10px;
+    font-weight: 700;
+}
+.risk-glass-card h4 {
+    margin: 0 0 10px 0;
+    color: #111827;
+    font-size: 13px;
+    line-height: 1.4;
+}
+.risk-glass-card p {
+    margin: 0 0 8px 0;
+    color: #4B5563;
+    font-size: 11px;
+    line-height: 1.5;
+}
+.risk-glass-card strong {
+    color: #374151;
+}
+@media (max-width: 900px) {
+    .risk-card-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+@media (max-width: 620px) {
+    .risk-card-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
 """,  unsafe_allow_html=True)
 
         selected_risk = st.pills(
@@ -441,7 +616,7 @@ with tab3:
         if not selected_risk:
             selected_risk = "All Risks"
 
-        # Display mitigation results generated by mitigation_engine.py
+        mitigation_cards = []
         for mitigation in mitigation_results:
 
             category = mitigation["category"]
@@ -451,28 +626,25 @@ with tab3:
                 continue
 
             card_html = f"""
-<div style="
-    border: 1px solid #E5E7EB;
-    border-radius: 8px;
-    padding: 16px;
-    margin-bottom: 12px;
-    background: white;
-    font-family: sans-serif;
-">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-        <div style="color: #DC2626; font-size: 12px; font-weight: 700;">&#9888; {mitigation["risk"]}</div>
-        <span style="color: #10B981; font-size: 10px; font-weight: bold;">{mitigation["impact"]} Impact</span>
+<div class="risk-glass-card">
+    <div class="risk-glass-card-header">
+        <div class="risk-glass-card-risk">&#9888; {mitigation["risk"]}</div>
+        <span class="risk-glass-card-impact">{mitigation["impact"]} Impact</span>
     </div>
-    <div style="font-weight: 700; font-size: 13px; color: #111827; margin-bottom: 8px;">
+    <h4>
         {mitigation["mitigation_strategy"]}
-    </div>
-    <div style="font-size: 12px; color: #6B7280; line-height: 1.5;">
-        <b>Preventive Action:</b> {mitigation["preventive_action"]}<br><br>
-        <b>Contingency Action:</b> {mitigation["contingency_action"]}
-    </div>
+    </h4>
+    <p><strong>Preventive Action:</strong> {mitigation["preventive_action"]}</p>
+    <p><strong>Contingency Action:</strong> {mitigation["contingency_action"]}</p>
 </div>
 """
-            st.markdown(textwrap.dedent(card_html), unsafe_allow_html=True)
+            mitigation_cards.append(textwrap.dedent(card_html))
+        st.markdown(
+            '<div class="risk-card-grid">'
+            + "".join(mitigation_cards)
+            + "</div>",
+            unsafe_allow_html=True,
+        )
     with langgraph_tab:
         st.markdown("""
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
@@ -482,79 +654,190 @@ with tab3:
 """, unsafe_allow_html=True)
 
         agent_container = st.container()
+        agent_steps = [
+            ("Data Ingestion", "Collect project details and market data"),
+            ("Risk Analysis", "Evaluate business and technical risks"),
+            ("Strategic Reasoning", "Generate mitigation strategies"),
+            ("Validation", "Cross-check recommendations with data"),
+            ("Report Generation", "Create final assessment report"),
+        ]
+
+        def render_agent_steps(active_step=-1, completed_steps=0, faded=False):
+            cards = []
+            for index, (title, description) in enumerate(agent_steps):
+                if index < completed_steps:
+                    state_class = "agent-step-complete agent-step-faded" if faded else "agent-step-complete"
+                    state_text = "Complete"
+                elif index == active_step:
+                    state_class = "agent-step-active"
+                    state_text = "In progress"
+                else:
+                    state_class = "agent-step-pending"
+                    state_text = "Queued"
+
+                connector_class = "agent-step-connector-complete" if index < completed_steps - 1 else "agent-step-connector-pending"
+                connector = "" if index == len(agent_steps) - 1 else f'<div class="agent-step-connector {connector_class}"></div>'
+                cards.append(f"""
+<div class="agent-step-wrap">
+  <div class="agent-step-box {state_class}">
+    <div class="agent-step-copy">
+      <div class="agent-step-title">{title}</div>
+      <div class="agent-step-description">{description}</div>
+      <div class="agent-step-state">{state_text}</div>
+    </div>
+  </div>
+  {connector}
+</div>
+""")
+
+            return f"""
+<style>
+.agent-step-list {{
+    position: relative;
+    width: min(100%, 680px);
+    margin: 0 auto;
+    padding: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.34);
+    backdrop-filter: blur(20px) saturate(145%);
+    -webkit-backdrop-filter: blur(20px) saturate(145%);
+    box-shadow: 0 14px 30px rgba(31, 41, 55, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.75);
+    font-family: sans-serif;
+}}
+.agent-step-wrap {{
+    position: relative;
+}}
+.agent-step-box {{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 7px 10px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    box-sizing: border-box;
+    transition: all 0.35s ease;
+}}
+.agent-step-copy {{
+    width: 100%;
+    min-width: 0;
+    text-align: center;
+}}
+.agent-step-title {{
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.2;
+}}
+.agent-step-description {{
+    margin-top: 3px;
+    font-size: 10px;
+    line-height: 1.4;
+}}
+.agent-step-state {{
+    margin-top: 4px;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}}
+.agent-step-pending {{
+    color: #9CA3AF;
+    background: rgba(255, 255, 255, 0.24);
+}}
+.agent-step-pending .agent-step-state {{
+    color: #9CA3AF;
+}}
+.agent-step-active {{
+    color: #4338CA;
+    border-color: #6366F1;
+    background: rgba(224, 231, 255, 0.74);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.14), 0 10px 22px rgba(79, 70, 229, 0.15);
+}}
+.agent-step-active .agent-step-description {{
+    color: #6366F1;
+}}
+.agent-step-active .agent-step-state {{
+    color: #4F46E5;
+}}
+.agent-step-complete {{
+    color: #047857;
+    border-color: #6EE7B7;
+    background: rgba(209, 250, 229, 0.56);
+}}
+.agent-step-complete .agent-step-description,
+.agent-step-complete .agent-step-state {{
+    color: #059669;
+}}
+.agent-step-faded {{
+    border-color: rgba(110, 231, 183, 0.55);
+    background: rgba(209, 250, 229, 0.3);
+    box-shadow: none;
+}}
+.agent-step-connector {{
+    width: 2px;
+    height: 22px;
+    margin: 0 auto;
+}}
+.agent-step-connector-complete {{
+    background: linear-gradient(#10B981, #6EE7B7);
+}}
+.agent-step-connector-pending {{
+    background: linear-gradient(#CBD5E1, #E5E7EB);
+}}
+@media (max-width: 620px) {{
+    .agent-step-list {{
+        padding: 10px;
+    }}
+}}
+</style>
+<div class="agent-step-list">{"".join(cards)}</div>
+"""
 
         with agent_container:
-            st.markdown("""
-<div style="border: 1px solid #E5E7EB; border-radius: 8px; padding: 20px; background: white; font-family: sans-serif; position: relative; margin-bottom: 16px;">
+            agent_progress = st.empty()
+            agent_progress.markdown(render_agent_steps(), unsafe_allow_html=True)
 
-<div style="position: absolute; left: 34px; top: 30px; bottom: 30px; width: 2px; background: #E5E7EB; z-index: 0;"></div>
+        st.markdown('<div style="height: 28px;"></div>', unsafe_allow_html=True)
+        button_left, button_center, button_right = st.columns([1.2, 0.85, 0.8])
+        with button_center:
+            run_agent_workflow = st.button(
+                "Run LangGraph Agent Workflow",
+                use_container_width=False,
+                type="primary",
+            )
 
-<div style="display: flex; gap: 12px; margin-bottom: 24px; position: relative; z-index: 1;">
-<div style="background: #FEE2E2; color: #DC2626; width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;">&#128190;</div>
-<div>
-<div style="font-size: 13px; font-weight: 700; color: #111827;">Data Ingestion</div>
-<div style="font-size: 11px; color: #6B7280; line-height: 1.4; margin-top: 2px;">Collect project details and market data</div>
-</div>
-</div>
-
-<div style="display: flex; gap: 12px; margin-bottom: 24px; position: relative; z-index: 1;">
-<div style="background: #FEF3C7; color: #D97706; width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;">&#128202;</div>
-<div>
-<div style="font-size: 13px; font-weight: 700; color: #111827;">Risk Analysis</div>
-<div style="font-size: 11px; color: #6B7280; line-height: 1.4; margin-top: 2px;">Evaluate business and technical risks</div>
-</div>
-</div>
-
-<div style="display: flex; gap: 12px; margin-bottom: 24px; position: relative; z-index: 1;">
-<div style="background: #E0E7FF; color: #4F46E5; width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;">&#129504;</div>
-<div>
-<div style="font-size: 13px; font-weight: 700; color: #111827;">Strategic Reasoning</div>
-<div style="font-size: 11px; color: #6B7280; line-height: 1.4; margin-top: 2px;">Generate mitigation strategies</div>
-</div>
-</div>
-
-<div style="display: flex; gap: 12px; margin-bottom: 24px; position: relative; z-index: 1;">
-<div style="background: #D1FAE5; color: #10B981; width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;">&#10004;</div>
-<div>
-<div style="font-size: 13px; font-weight: 700; color: #111827;">Validation</div>
-<div style="font-size: 11px; color: #6B7280; line-height: 1.4; margin-top: 2px;">Cross-check recommendations with data</div>
-</div>
-</div>
-
-<div style="display: flex; gap: 12px; position: relative; z-index: 1;">
-<div style="background: #F3E8FF; color: #9333EA; width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;">&#128196;</div>
-<div>
-<div style="font-size: 13px; font-weight: 700; color: #111827;">Report Generation</div>
-<div style="font-size: 11px; color: #6B7280; line-height: 1.4; margin-top: 2px;">Create final assessment report</div>
-</div>
-</div>
-
-</div>
-""", unsafe_allow_html=True)
-
-        if st.button("Run LangGraph Agent Workflow", use_container_width=True, type="primary"):
+        if run_agent_workflow:
             import time
             status = st.status("Initializing Agent Workflow...", expanded=True)
 
+            agent_progress.markdown(render_agent_steps(active_step=0), unsafe_allow_html=True)
             status.update(label="Step 1: Data Ingestion...")
             time.sleep(1)
             status.write("✅ Collected project details and market parameters")
 
+            agent_progress.markdown(render_agent_steps(active_step=1, completed_steps=1), unsafe_allow_html=True)
             status.update(label="Step 2: Risk Analysis...")
             time.sleep(1)
             status.write("✅ Evaluated business and technical risks")
 
+            agent_progress.markdown(render_agent_steps(active_step=2, completed_steps=2), unsafe_allow_html=True)
             status.update(label="Step 3: Strategic Reasoning...")
             time.sleep(1.5)
             status.write("✅ Generated mitigation strategies using Gemini reasoning")
 
+            agent_progress.markdown(render_agent_steps(active_step=3, completed_steps=3), unsafe_allow_html=True)
             status.update(label="Step 4: Validation...")
             time.sleep(1)
             status.write("✅ Cross-checked recommendations with dataset")
 
+            agent_progress.markdown(render_agent_steps(active_step=4, completed_steps=4), unsafe_allow_html=True)
             status.update(label="Step 5: Report Generation...", state="complete")
             time.sleep(0.5)
             status.write("✅ Final assessment report successfully created!")
+            agent_progress.markdown(render_agent_steps(completed_steps=5), unsafe_allow_html=True)
+            time.sleep(5)
+            agent_progress.markdown(render_agent_steps(completed_steps=5, faded=True), unsafe_allow_html=True)
 
             st.success("Agent Workflow Complete! The recommended mitigation strategies have been finalized.")
 with tab4:
