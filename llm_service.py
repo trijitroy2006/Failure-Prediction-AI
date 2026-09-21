@@ -4,7 +4,8 @@ from dotenv import load_dotenv
 from google import genai
 
 load_dotenv()
-client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+api_key = os.getenv("GEMINI_API_KEY")
+client = genai.Client(api_key=api_key) if api_key else None
 
 
 def build_prompt(project_data, risk_data, swot_data, feasibility_score):
@@ -46,6 +47,9 @@ Return ONLY valid JSON, no extra text, no markdown formatting, in this exact for
 
 
 def generate_llm_recommendations(project_data, risk_data, swot_data, feasibility_score):
+    if client is None:
+        return None
+
     prompt = build_prompt(project_data, risk_data, swot_data, feasibility_score)
     try:
         response = client.models.generate_content(

@@ -211,6 +211,11 @@ with tab2:
 
     # Generate Milestone 3 mitigation strategies
     mitigation_results = generate_mitigation(risk_data)
+    market_data_for_improvements = market_analysis.get_market_data(
+        data.get("industry", "Technology"),
+        data.get("target_market", ""),
+        data.get("budget", 0),
+    )
 
     from swot_analysis import generate_swot
     swot = generate_swot(team_expertise, innovation_level, market_competition, resource_availability, market_research)
@@ -229,7 +234,12 @@ with tab2:
 
     recommendation_results = {
         "recommendations": generate_improvements(
-            data, risk_input_data, swot, feasibility_score
+            data,
+            risk_input_data,
+            swot,
+            feasibility_score,
+            market_data=market_data_for_improvements,
+            mitigation_results=mitigation_results,
         )
     }
 
@@ -373,25 +383,22 @@ with tab3:
 <p style="margin: 4px 0 24px 0; color: #6B7280; font-size: 15px; font-family: sans-serif;">AI-powered mitigation strategies and agent workflows</p>
 """, unsafe_allow_html=True)
 
-    m3_c1, m3_c2, m3_c3 = st.columns([1, 1.2, 1])
+    risk_mitigation_tab, improvements_tab, langgraph_tab = st.tabs([
+        "Risk Mitigation",
+        "Improvements",
+        "LangGraph Agent",
+    ])
     
-    with m3_c1:
+    with improvements_tab:
         st.markdown("""
 <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
-        <h3 style="margin:0; font-size: 16px; color: #111827; font-family: sans-serif;">Project Improvements</h3>
+        <h3 style="margin:0; font-size: 16px; color: #111827; font-family: sans-serif;">Improvements</h3>
         <span style="background: #6D28D9; color: white; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: bold; font-family: sans-serif;">AI Powered</span>
         </div>
         """, unsafe_allow_html=True)
 
         
         for rec in recommendation_results["recommendations"]:
-            improvement_steps = rec.get("steps") or [
-                rec.get("action", "Review this project area and define a corrective action.")
-            ]
-            improvement_benefit = rec.get(
-                "improvement",
-                rec.get("risk_reduction", "This action supports stronger project execution."),
-            )
             card_html = f"""
 <div style="
     border: 1px solid #E5E7EB;
@@ -409,14 +416,13 @@ with tab3:
     <div style="font-size: 12px; color: #6B7280; line-height: 1.5;">
         <b>Category:</b> {rec["category"]}<br><br>
         <b>Problem:</b> {rec["problem"]}<br><br>
-        <b>Improvement Steps:</b><br>
-        {''.join(f'{index}. {step}<br>' for index, step in enumerate(improvement_steps, start=1))}<br>
-        <b>How This Supports the Project:</b> {improvement_benefit}
+        <b>Recommendation:</b> {rec["action"]}<br><br>
+        <b>Risk Reduction:</b> {rec["risk_reduction"]}
     </div>
 </div>
 """
             st.markdown(textwrap.dedent(card_html), unsafe_allow_html=True)
-    with m3_c2:
+    with risk_mitigation_tab:
         st.markdown("""
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
 <h3 style="margin:0; font-size: 16px; color: #111827; font-family: sans-serif;">Risk Mitigation</h3>
@@ -467,7 +473,7 @@ with tab3:
 </div>
 """
             st.markdown(textwrap.dedent(card_html), unsafe_allow_html=True)
-    with m3_c3:
+    with langgraph_tab:
         st.markdown("""
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
 <h3 style="margin:0; font-size: 16px; color: #111827; font-family: sans-serif;">LangGraph Agent</h3>
