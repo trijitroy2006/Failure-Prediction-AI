@@ -115,10 +115,10 @@ with tab1:
             try:
                 project_id = database.insert_project(project_data)
                 st.session_state['project_id'] = project_id
+                st.toast("✅ Project successfully saved to database!", icon="🎉")
             except Exception as error:
-                st.warning("Database connection failed. Proceeding with temporary local session data.")
+                st.error(f"Database error: {error}")
                 st.session_state['project_id'] = -1
-                print(f"Could not save the project to the database: {error}")
 
     with col2:
         st.subheader("Market Analysis")
