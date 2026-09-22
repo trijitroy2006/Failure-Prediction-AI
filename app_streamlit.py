@@ -4,6 +4,8 @@ import market_analysis
 import textwrap
 import database
 
+from recommendation_engine import generate_recommendations
+from llm_service import generate_llm_recommendations
 
 st.set_page_config(page_title="Failure Prediction AI", layout="wide", initial_sidebar_state="collapsed")
 
@@ -240,16 +242,29 @@ with tab2:
         "risk_score": risk_score
     }
 
-    recommendation_results = {
-        "recommendations": generate_improvements(
-            data,
-            risk_input_data,
-            swot,
-            feasibility_score,
-            market_data=market_data_for_improvements,
-            mitigation_results=mitigation_results,
-        )
-    }
+    # ============================================================
+    # M3 - STRATEGIC RECOMMENDATIONS
+    # ============================================================
+
+    recommendation_results = generate_recommendations(
+        data,
+        risk_input_data,
+        swot,
+        feasibility_score
+    )
+
+    # ============================================================
+    # M3 - IMPROVEMENT PLAN
+    # ============================================================
+
+    improvement_results = generate_improvements(
+        data,
+        risk_input_data,
+        swot,
+        feasibility_score,
+        market_data=market_data_for_improvements,
+        mitigation_results=mitigation_results
+    )
 
     project_id = st.session_state.get("project_id")
     if project_id and not st.session_state.get("assessment_saved", False):
@@ -406,11 +421,101 @@ with tab3:
 <p style="margin: 4px 0 24px 0; color: #6B7280; font-size: 15px; font-family: sans-serif;">AI-powered mitigation strategies and agent workflows</p>
 """, unsafe_allow_html=True)
 
-    risk_mitigation_tab, improvements_tab, langgraph_tab = st.tabs([
+    recommendation_tab, risk_mitigation_tab, improvements_tab, langgraph_tab = st.tabs([
+        "Strategic Recommendations",
         "Risk Mitigation",
         "Improvements",
-        "LangGraph Agent",
+        "LangGraph Agent"
     ])
+
+    # ============================================================
+    # STRATEGIC RECOMMENDATIONS
+    # ============================================================
+
+    with recommendation_tab:
+
+        st.subheader("AI Strategic Recommendations")
+
+        if recommendation_results:
+
+            overall = recommendation_results.get(
+                "overall_strategic_recommendation",
+                "Focus on reducing the highest-priority project risks."
+            )
+
+            st.info(overall)
+
+            recommendations = recommendation_results.get(
+                "recommendations",
+                []
+            )
+
+            if recommendations:
+
+                for rec in recommendations:
+
+                    priority = rec.get("priority", "Medium")
+                    category = rec.get("category", "Strategy")
+                    title = rec.get("title", "Recommendation")
+
+                    st.markdown(
+                        f"### {title}"
+                    )
+
+                    st.markdown(
+                        f"**Category:** {category}  \n"
+                        f"**Priority:** {priority}"
+                    )
+
+                    st.markdown(
+                        f"**Problem:** {rec.get('problem', 'N/A')}"
+                    )
+
+                    if rec.get("explanation"):
+                        st.markdown(
+                            f"**Why it matters:** {rec['explanation']}"
+                        )
+
+                    st.markdown(
+                        f"**Recommended Action:** "
+                        f"{rec.get('action', 'N/A')}"
+                    )
+
+                    st.markdown(
+                        f"**Risk Reduction:** "
+                        f"{rec.get('risk_reduction', 'N/A')}"
+                    )
+
+                    st.divider()
+
+            else:
+                st.warning("No strategic recommendations were generated.")
+
+            # Short-term plan
+            st.subheader("Short-Term Action Plan")
+
+            short_term = recommendation_results.get(
+            "short_term_action_plan",
+            []
+            )
+
+            for action in short_term:
+                st.markdown(f"- {action}")
+
+            # Long-term plan
+            st.subheader("Long-Term Action Plan")
+
+            long_term = recommendation_results.get(
+                "long_term_action_plan",
+                []
+            )
+
+            for action in long_term:
+                st.markdown(f"- {action}")
+
+        else:
+            st.warning("No strategic recommendations available.")
+
     
     with improvements_tab:
         st.markdown("""
@@ -518,7 +623,7 @@ with tab3:
         """, unsafe_allow_html=True)
 
         improvement_cards = []
-        for rec in recommendation_results["recommendations"]:
+        for rec in improvement_results:
             steps = rec.get("steps") or [rec.get("action", "Review this project area and define a corrective action.")]
             steps_html = "".join(f"<li>{step}</li>" for step in steps)
             recommendation_html = "".join(
