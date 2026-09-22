@@ -81,9 +81,6 @@ tab1, tab2, tab3, tab4 = st.tabs(["Project Input", "Risk Assessment", "Recommend
 
 with tab1:
     st.markdown("""
-<div style="background-color: #FEE2E2; color: #DC2626; padding: 4px 12px; border-radius: 16px; display: inline-block; font-size: 0.75rem; font-weight: 700; margin-bottom: 8px; font-family: sans-serif;">
-▲ MILESTONE 1 • WEEKS 1-2
-</div>
 <h1 style="margin: 0; padding: 0; font-size: 28px; color: #111827; font-weight: 700; font-family: sans-serif;">Data Collection & Market Intelligence</h1>
 <p style="margin: 4px 0 24px 0; color: #6B7280; font-size: 15px; font-family: sans-serif;">Gather project data and analyze market landscape</p>
 """, unsafe_allow_html=True)
@@ -166,9 +163,6 @@ with tab1:
 
 with tab2:
     st.markdown("""
-<div style="background-color: #FEE2E2; color: #DC2626; padding: 4px 12px; border-radius: 16px; display: inline-block; font-size: 0.75rem; font-weight: 700; margin-bottom: 8px; font-family: sans-serif;">
-📋 MILESTONE 2 • WEEKS 3-4
-</div>
 <h1 style="margin: 0; padding: 0; font-size: 28px; color: #111827; font-weight: 700; font-family: sans-serif;">Risk Assessment & SWOT Analysis</h1>
 <p style="margin: 4px 0 24px 0; color: #6B7280; font-size: 15px; font-family: sans-serif;">AI-powered risk scoring and strategic evaluation</p>
 """, unsafe_allow_html=True)
@@ -414,9 +408,6 @@ with tab2:
 
 with tab3:
     st.markdown("""
-<div style="background-color: #FEE2E2; color: #DC2626; padding: 4px 12px; border-radius: 16px; display: inline-block; font-size: 0.75rem; font-weight: 700; margin-bottom: 8px; font-family: sans-serif;">
-&#128205; MILESTONE 3 &#8226; WEEKS 5-6
-</div>
 <h1 style="margin: 0; padding: 0; font-size: 28px; color: #111827; font-weight: 700; font-family: sans-serif;">Recommendations & Strategic Reasoning</h1>
 <p style="margin: 4px 0 24px 0; color: #6B7280; font-size: 15px; font-family: sans-serif;">AI-powered mitigation strategies and agent workflows</p>
 """, unsafe_allow_html=True)
