@@ -7,7 +7,7 @@ import database
 from recommendation_engine import generate_recommendations
 from llm_service import generate_llm_recommendations
 
-st.set_page_config(page_title="Failure Prediction AI", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="Prediction AI", layout="wide", initial_sidebar_state="collapsed")
 
 # Custom CSS to mimic the Mac-style window from the PDF
 st.markdown("""
