@@ -27,7 +27,6 @@ border: 1px solid #BFDBFE;
 display: flex;
 gap: 8px;
 margin-bottom: 20px;
-margin-top: -10px;
 }
 .mac-dot {
 width: 12px;
@@ -70,6 +69,7 @@ padding-bottom: 0 !important;
 
 # Injecting the Mac dots at the top of the container
 st.markdown("""
+<div style="font-family: sans-serif; font-weight: 700; font-size: 16px; color: #111827; margin-bottom: 12px; margin-top: -16px;">Prediction-AI</div>
 <div class="mac-controls">
 <div class="mac-dot mac-red"></div>
 <div class="mac-dot mac-yellow"></div>
