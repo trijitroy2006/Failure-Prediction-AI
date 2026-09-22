@@ -115,7 +115,6 @@ with tab1:
             try:
                 project_id = database.insert_project(project_data)
                 st.session_state['project_id'] = project_id
-                st.toast("✅ Project successfully saved to database!", icon="🎉")
             except Exception as error:
                 st.error(f"Database error: {error}")
                 st.session_state['project_id'] = -1
