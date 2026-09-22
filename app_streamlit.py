@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import market_analysis
 import textwrap
+import database
 
 
 st.set_page_config(page_title="Failure Prediction AI", layout="wide", initial_sidebar_state="collapsed")
@@ -102,14 +103,21 @@ with tab1:
             submitted = st.form_submit_button("Analyze Project")
             
         if submitted:
-            st.session_state['project_data'] = {
+            project_data = {
                 "startup_name": startup_name,
                 "industry": industry,
                 "business_model": business_model,
                 "target_market": target_market,
                 "budget": budget,
-                "description": description
+                "project_description": description,
             }
+            try:
+                project_id = database.insert_project(project_data)
+                st.session_state['project_id'] = project_id
+                st.session_state['project_data'] = project_data
+                st.session_state['assessment_saved'] = False
+            except Exception as error:
+                print(f"Could not save the project to the database: {error}")
 
     with col2:
         st.subheader("Market Analysis")
@@ -242,6 +250,21 @@ with tab2:
             mitigation_results=mitigation_results,
         )
     }
+
+    project_id = st.session_state.get("project_id")
+    if project_id and not st.session_state.get("assessment_saved", False):
+        try:
+            database.save_assessment(
+                project_id=project_id,
+                swot_data=swot,
+                risk_score=risk_score,
+                risk_status=risk_status,
+                success_probability=success_probability,
+                recommendations=recommendation_results["recommendations"],
+            )
+            st.session_state["assessment_saved"] = True
+        except Exception as error:
+            print(f"Could not save the assessment to the database: {error}")
 
     # Format SWOT bullets as HTML dots
     def format_swot(items):
