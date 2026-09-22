@@ -110,12 +110,14 @@ with tab1:
                 "budget": budget,
                 "project_description": description,
             }
+            st.session_state['project_data'] = project_data
+            st.session_state['assessment_saved'] = False
             try:
                 project_id = database.insert_project(project_data)
                 st.session_state['project_id'] = project_id
-                st.session_state['project_data'] = project_data
-                st.session_state['assessment_saved'] = False
             except Exception as error:
+                st.warning("Database connection failed. Proceeding with temporary local session data.")
+                st.session_state['project_id'] = -1
                 print(f"Could not save the project to the database: {error}")
 
     with col2:
