@@ -90,14 +90,14 @@ with tab1:
     with col1:
         st.subheader("Project Submission")
         with st.form("project_form"):
-            startup_name = st.text_input("Startup/Project Name", "e.g., TechVenture AI")
-            industry = st.selectbox("Industry/Sector", ["Technology", "Healthcare", "Finance", "Education"])
-            business_model = st.selectbox("Business Model", ["SaaS", "B2B", "B2C", "Marketplace"])
+            startup_name = st.text_input("Startup/Project Name", placeholder="e.g., TechVenture AI")
+            industry = st.selectbox("Industry/Sector", ["Technology", "Healthcare", "Finance", "Education"], index=None, placeholder="Select an industry...")
+            business_model = st.selectbox("Business Model", ["SaaS", "B2B", "B2C", "Marketplace"], index=None, placeholder="Select a business model...")
             
-            target_market = st.text_input("Target Market", "e.g., SMBs")
-            budget = st.number_input("Budget (USD)", min_value=0, value=100000, step=10000)
+            target_market = st.text_input("Target Market", placeholder="e.g., SMBs")
+            budget = st.number_input("Budget (USD)", min_value=0, value=None, placeholder="100000", step=10000)
                 
-            description = st.text_area("Project Description", "Brief description of your project idea...")
+            description = st.text_area("Project Description", placeholder="Brief description of your project idea...")
             
             submitted = st.form_submit_button("Analyze Project")
             
